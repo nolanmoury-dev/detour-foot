@@ -139,16 +139,28 @@ label.b{display:inline-block}
 .cdv em{font-style:normal;font-size:3cqw;opacity:.7}
 .cdp{position:absolute;left:0;bottom:0;height:1.2cqw;width:100%;background:#fff;transform-origin:left}
 input[type=password]{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:6px;padding:6px 8px;flex:1;min-width:120px}
+#gate{position:fixed;inset:0;z-index:60;background:#38003c;color:#fff;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+#gate .gbox{width:100%;max-width:360px;text-align:center}
+#gate img{width:150px;height:auto;margin-bottom:6px}
+#gate h1{margin:0 0 18px;font:700 34px 'Barlow Condensed',Impact,sans-serif;letter-spacing:.1em}
+#gate .lbl{color:#cbb8d8}#gate .err{color:#ff8fb3;font-weight:600;min-height:1.4em}
+#gate .col{display:flex;flex-direction:column;gap:10px;margin:14px 0 8px}
+#gate input{width:100%;font-size:16px;min-height:46px;flex:none}
+#gate button.b{min-height:48px;font-size:18px;color:#fff;border-color:#fff;background:none}
+#gate button.b.pk{background:#e90052;border-color:#e90052}
+.spin{width:44px;height:44px;margin:0 auto 10px;border:5px solid #ffffff30;border-top-color:#e90052;border-radius:50%;animation:rot .9s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
 body.ov{background:transparent}body.ov::before,body.ov .top,body.ov #v-overlay p{display:none}body.ov main{padding:0;max-width:none}body.ov .stage{border-radius:0;background:none}
 </style>
 </head>
 <body>
+<div id="gate"><div class="gbox"><img src="logo.png" alt=""><h1>DÉTOUR FOOT</h1>
+<div id="gload"><div class="spin"></div><p class="lbl">Chargement…</p></div>
+<div id="gform" hidden><p class="lbl">Connecte-toi ou crée ton compte pour entrer.</p><div class="col"><input type="text" id="le" placeholder="Pseudo" maxlength="20" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"><input type="password" id="lp" placeholder="Mot de passe" autocomplete="current-password"><button class="b pk" data-a="login">Se connecter</button><button class="b" data-a="signup">Créer un compte</button></div><p id="lerr" class="lbl err"></p><p class="lbl">Pseudo : 3 à 20 caractères (lettres, chiffres, _). Mot de passe : 6 caractères minimum.</p></div></div></div>
 <header class="top"><img class="blogo" src="logo.png" alt=""><span class="brand">DÉTOUR FOOT</span>
 <nav id="nav"><button data-v="admin" class="on">Admin</button><button data-v="player">Joueur</button><button data-v="overlay">Overlay</button></nav>
 <select id="sty" aria-label="Style"><option value="pl">Premier League</option><option value="l1">Ligue 1</option><option value="lg">Liga</option></select><button class="b" id="acc" data-a="acc" hidden>Connexion</button></header>
 <main>
-<div class="panel" id="login" hidden><h4>Connexion</h4><div class="r"><input type="text" id="le" placeholder="Pseudo" maxlength="20" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"><input type="password" id="lp" placeholder="Mot de passe" autocomplete="current-password"></div><div class="r"><button class="b pk" data-a="login">Se connecter</button><button class="b" data-a="signup">Créer un compte</button><span id="lerr" class="lbl"></span></div><p class="lbl">Pseudo : 3 à 20 caractères (lettres, chiffres, _). Mot de passe : 6 caractères minimum.</p></div>
-<p class="lbl" id="noadm" hidden>Ce compte n’est pas opérateur : la télécommande lui est réservée. Va dans l’onglet Joueur pour le chat et les paris.</p>
 <section id="v-admin"><div class="mini" id="mini"></div><div class="adm" id="adm">
 <div><div class="panel"><h4>Programme</h4><div class="stage" id="s1"></div></div>
 <div class="panel"><h4>Plein écran</h4><div class="r" id="fsb"><button class="b" data-f="rank">Classement</button><button class="b" data-f="bracket">Arbre du tournoi</button><button class="b" data-f="pitch">Compos terrain</button><button class="b" data-f="list">Compos liste</button><button class="b" data-f="stats">Stats</button><button class="b pk" data-f="">Fermer</button></div></div>
@@ -218,18 +230,18 @@ function music(){sndUI();if(sb&&isAdmin){synthOff();aud.pause();return}var v=(S.
   if(!(S.mus&&!S.mute&&unlocked)){synthOff();aud.pause();return}
   if(S.mv&&S.mv.url){synthOff();if(cur!==S.mv.url){cur=S.mv.url;aud.src=cur}aud.volume=v;var pr=aud.play();if(pr&&pr.catch)pr.catch(function(){})}
   else{aud.pause();synthOn();sy.g.gain.value=v}}
-var user=null,view='admin',wantLogin=false,pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx'];
+var user=null,ready=false,view='admin',pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx'];
 function push(){if(!sb||!isAdmin)return;var d={};if(S.cd&&cdEnd)S.cd.rem=Math.max(0,cdEnd-Date.now());PUB.forEach(function(k){d[k]=S[k]});sb.from('match_state').update({data:d,updated_at:new Date().toISOString()}).eq('id',1).then(function(r){if(r.error)console.error(r.error)})}
 function commit(){all();push()}
 function applyFx(f){if(!f||f.id===lastFx)return;lastFx=f.id;var t=T[f.side?S.a:S.h];if(f.k==='g'){S.mute=1;music();setTimeout(function(){S.mute=0;music();adm()},4000);ST.forEach(function(s){s.goal(f.side,t,f.name,f.min)});sys('⚽ BUT de '+t[0]+' ! '+f.name+' '+f.min+'’')}else{ST.forEach(function(s){s.card(f.k,f.name,T[S.h],f.min)})}}
 function recv(d,first){PUB.forEach(function(k){if(d[k]!==undefined)S[k]=d[k]});if(first)lastFx=d.fx?d.fx.id:0;if(S.cd){if(S.cd.id!==cdId){cdId=S.cd.id;cdEnd=Date.now()+S.cd.rem}}else{cdEnd=0;cdId=0}all();applyFx(S.fx)}
 function loadState(){if(!sb)return;sb.from('match_state').select('data').eq('id',1).single().then(function(r){if(r.data&&r.data.data&&r.data.data.h!==undefined){recv(r.data.data,true);th.value=S.h;ta.value=S.a;$('#cl').value=S.logo}})}
-function ui(){var a=$('#acc');$('#login').hidden=!(sb&&!user&&(wantLogin||view==='admin'));$('#adm').hidden=!!sb&&!isAdmin;$('#noadm').hidden=!(sb&&user&&!isAdmin&&view==='admin');a.hidden=!sb||document.body.classList.contains('ov');a.textContent=user?NAME+' · Déconnexion':'Connexion';
-  document.querySelector('#nav [data-v="admin"]').hidden=!!sb&&!isAdmin;
-  if(sb&&!isAdmin&&view==='admin')document.querySelector('#nav [data-v="player"]').click()}
-function need(m){wantLogin=true;ui();$('#lerr').textContent=m;window.scrollTo(0,0)}
+function ui(){var a=$('#acc'),ov=pin==='overlay',np=!!sb&&!isAdmin;$('#gate').hidden=!sb||ov||(ready&&!!user);$('#gload').hidden=ready;$('#gform').hidden=!ready;
+  $('#adm').hidden=np;a.hidden=!sb||ov||!user;a.textContent=user?NAME+' · Déconnexion':'';
+  ['admin','overlay'].forEach(function(v){document.querySelector('#nav [data-v="'+v+'"]').hidden=np});
+  if(np&&!ov&&(view==='admin'||view==='overlay'))document.querySelector('#nav [data-v="player"]').click()}
 function tr(m){m=String(m||'');if(/invalid login/i.test(m))return 'Pseudo ou mot de passe incorrect.';if(/already registered|already exists/i.test(m))return 'Ce pseudo est déjà pris.';if(/email/i.test(m)&&/invalid/i.test(m))return 'Supabase refuse l’adresse interne : change emailDomain dans config.js (voir le README).';if(/signups? not allowed|disabled/i.test(m))return 'Les inscriptions sont désactivées dans Supabase.';return m}
-function gate(){if(!sb){ui();return}sb.auth.getSession().then(function(r){var s=r.data.session;user=s?s.user:null;isAdmin=false;if(!user){music();ui();return}NAME=(user.user_metadata&&user.user_metadata.pseudo)||String(user.email).split('@')[0];sb.from('admins').select('user_id').eq('user_id',user.id).then(function(x){isAdmin=!!(x.data&&x.data.length);if(isAdmin){loadState();if(!pin&&view==='player')document.querySelector('#nav [data-v="admin"]').click()}music();ui()})})}
+function gate(){if(!sb){ui();return}sb.auth.getSession().then(function(r){var s=r.data.session;user=s?s.user:null;isAdmin=false;ready=true;if(!user){music();ui();return}NAME=(user.user_metadata&&user.user_metadata.pseudo)||String(user.email).split('@')[0];sb.from('admins').select('user_id').eq('user_id',user.id).then(function(x){isAdmin=!!(x.data&&x.data.length);if(isAdmin){loadState();if(!pin&&view==='player')document.querySelector('#nav [data-v="admin"]').click()}music();ui()})}).catch(function(){ready=true;ui()})}
 function pb(){var b=$('#pb');b.className='box s-'+S.sty;mount(b.querySelector('.fs'),S.pt);var s=S.sc;$('#enc').innerHTML='<b>Si le score reste ainsi :</b> '+(s[0]>s[1]?T[S.h][0]+' file':s[0]<s[1]?T[S.a][0]+' file':'égalité, prolongations')+(s[0]===s[1]?'':' en finale.')}
 function adm(){$('#run').textContent=S.run?'Pause':'Coup d’envoi';$('#mus').textContent=S.mus?'Marche':'Arrêt';$('#mus').classList.toggle('on',!!S.mus);$('#eq').classList.toggle('on',!!(S.mus&&!S.mute));$('#rt').textContent=mm(rec.t);
   $('#recl').innerHTML=rec.list.map(function(x){return '<li>'+x+'</li>'}).join('');[].forEach.call($('#fsb').children,function(b){b.classList.toggle('on',b.dataset.f===S.fs&&S.fs!=='')})}
@@ -249,10 +261,10 @@ PH.forEach(function(p,i){var b=document.createElement('button');b.className='b';
 T.slice(0,3).forEach(function(){});
 [['Gagne','#'],['Nul','#'],['Perd','#']].forEach(function(x,i){var b=document.createElement('button');b.className='b';b.dataset.b=i;b.textContent=['Domicile gagne','Match nul','Extérieur gagne'][i]+' · 10 pts';$('#bb').appendChild(b)});
 document.addEventListener('click',function(e){
-  var n=e.target.closest('#nav button');if(n){['admin','player','overlay'].forEach(function(v){$('#v-'+v).hidden=v!==n.dataset.v});[].forEach.call($('#nav').children,function(b){b.classList.toggle('on',b===n)});view=n.dataset.v;wantLogin=false;ui();all();return}
+  var n=e.target.closest('#nav button');if(n){['admin','player','overlay'].forEach(function(v){$('#v-'+v).hidden=v!==n.dataset.v});[].forEach.call($('#nav').children,function(b){b.classList.toggle('on',b===n)});view=n.dataset.v;ui();all();return}
   var f=e.target.closest('[data-f]');if(f){S.fs=f.dataset.f;commit();return}
   var p=e.target.closest('#pt [data-p]');if(p){S.pt=p.dataset.p;[].forEach.call($('#pt').children,function(b){b.classList.toggle('pk',b===p)});pb();return}
-  var bt=e.target.closest('[data-b]');if(bt){if(sb&&!user){need('Connecte-toi pour parier.');return}var i=+bt.dataset.b;if(sb)sb.from('bets').insert({pick:i});bets.push([T[S.h][1]+' gagne',T[S.a][1]+' gagne'][i===0?0:1]);bets[bets.length-1]=['Domicile ('+T[S.h][1]+') gagne','Match nul','Extérieur ('+T[S.a][1]+') gagne'][i]+' · 10 pts';$('#bets').innerHTML=bets.map(function(x){return '<li>'+x+'</li>'}).join('');return}
+  var bt=e.target.closest('[data-b]');if(bt){var i=+bt.dataset.b;if(sb)sb.from('bets').insert({pick:i});bets.push([T[S.h][1]+' gagne',T[S.a][1]+' gagne'][i===0?0:1]);bets[bets.length-1]=['Domicile ('+T[S.h][1]+') gagne','Match nul','Extérieur ('+T[S.a][1]+') gagne'][i]+' · 10 pts';$('#bets').innerHTML=bets.map(function(x){return '<li>'+x+'</li>'}).join('');return}
   var pi=e.target.closest('[data-i]');if(pi){var x=PH[+pi.dataset.i];S.lt={tag:x[0],text:x[1],id:Date.now()};commit();return}
   var qm=e.target.closest('[data-m]');if(qm){$('#cdm').value=qm.dataset.m;return}
   var a=e.target.closest('[data-a]');if(!a)return;a=a.dataset.a;
@@ -274,9 +286,9 @@ document.addEventListener('click',function(e){
     if(pw.length<6){er.textContent='Mot de passe : 6 caractères minimum.';return}
     er.textContent='…';var mail=ps.toLowerCase()+'@'+(CFG.emailDomain||'gmail.com');
     var rq=a==='login'?sb.auth.signInWithPassword({email:mail,password:pw}):sb.auth.signUp({email:mail,password:pw,options:{data:{pseudo:ps}}});
-    rq.then(function(r){if(r.error){er.textContent=tr(r.error.message);return}if(!r.data.session){er.textContent='Compte créé, mais Supabase attend une confirmation par e-mail : désactive « Confirm email » (voir le README).';return}er.textContent='';$('#lp').value='';wantLogin=false;gate()});return}
-  else if(a==='acc'){if(user){sb.auth.signOut().then(function(){gate()})}else{wantLogin=true;ui();window.scrollTo(0,0)}return}
-  else if(a==='send'){if(sb&&!user){need('Connecte-toi pour écrire dans le chat.');return}var c=$('#cm'),raw=c.value.trim();if(raw){c.value='';if(sb)sb.from('chat').insert({name:NAME,msg:raw});else{chat.push(['Moi',esc(raw)]);cr()}}return}
+    rq.then(function(r){if(r.error){er.textContent=tr(r.error.message);return}if(!r.data.session){er.textContent='Compte créé, mais Supabase attend une confirmation par e-mail : désactive « Confirm email » (voir le README).';return}er.textContent='';$('#lp').value='';ready=false;ui();gate()});return}
+  else if(a==='acc'){if(user)sb.auth.signOut().then(function(){gate()});return}
+  else if(a==='send'){var c=$('#cm'),raw=c.value.trim();if(raw){c.value='';if(sb)sb.from('chat').insert({name:NAME,msg:raw});else{chat.push(['Moi',esc(raw)]);cr()}}return}
   commit()});
 setInterval(function(){if(S.run)S.sec++;if(rec.st===1)rec.t++;if(isAdmin&&S.run&&S.sec%10===0)push();ST.forEach(function(s){s.bug();s.cdr()});$('#rt').textContent=mm(rec.t);$('#mini').textContent=T[S.h][1]+' '+S.sc[0]+' – '+S.sc[1]+' '+T[S.a][1]+' · '+mm(S.sec)+(S.run?'':' · pause');
   if(isAdmin&&S.cd&&cdEnd){var rr=cdEnd-Date.now();if(rr<=0&&!kick){kick=1;S.run=1;S.sec=0;S.mus=0;commit()}else if(rr<=-4000){S.cd=null;cdEnd=0;commit()}else if(rr>0&&Math.floor(Date.now()/1000)%5===0)push()}},1000);
