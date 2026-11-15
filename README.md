@@ -18,11 +18,12 @@ Il n'y a rien à « connecter » dans Vercel : le site tourne dans le navigateur
 4. **Project Settings > API** : copie l'URL et la clé `anon public` dans `public/config.js`.
 
 ## 2. Comptes : connexion et création de compte
-- Chacun se connecte avec un **pseudo** (3 à 20 caractères : lettres, chiffres, `_`) et un mot de passe (6 caractères minimum). Bouton **Connexion** en haut à droite, ou « Créer un compte ».
-- Il faut être connecté pour écrire dans le chat et parier. Le pseudo s'affiche dans le chat.
+- À l'arrivée sur le site, un écran de chargement s'affiche, puis l'écran **Se connecter / Créer un compte**. Il faut un compte pour entrer. Le bouton avec ton pseudo, en haut à droite, sert à te déconnecter.
+- Pseudo : 3 à 20 caractères (lettres, chiffres, `_`). Mot de passe : 6 caractères minimum. Le pseudo s'affiche dans le chat.
+- L'adresse `/?view=overlay` (pour OBS) s'ouvre sans compte, pour que la source navigateur fonctionne toute seule.
 - Le site fabrique en interne l'adresse `pseudo@gmail.com` (valeur `emailDomain` dans `public/config.js`). Aucun e-mail n'est envoyé. Si Supabase répond que l'adresse est invalide, mets un autre domaine qui existe dans `emailDomain` **et** dans la fonction `make_operator` du SQL, avant de créer des comptes.
 - **Compte opérateur** : le pseudo `Noln_mry` devient automatiquement admin dès qu'on le crée. Après le déploiement, ouvre le site, clique « Créer un compte » avec ce pseudo et ton mot de passe : la télécommande s'ouvre. Fais-le en premier, car le premier qui crée ce pseudo devient opérateur.
-- **Tous les autres comptes sont des comptes joueur** : ils n'ont pas l'onglet Admin, seulement Joueur (chat, paris) et Overlay. Seul `Noln_mry` voit l'onglet Admin.
+- **Tous les autres comptes sont des comptes joueur** : ils n'ont ni l'onglet Admin ni l'onglet Overlay, seulement la vue Joueur (chat, paris). Seul `Noln_mry` voit Admin et Overlay.
 - Le mot de passe n'est écrit nulle part dans le projet.
 
 ## 3. GitHub
