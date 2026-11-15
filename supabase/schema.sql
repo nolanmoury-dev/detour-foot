@@ -67,8 +67,21 @@ alter publication supabase_realtime add table public.match_state, public.chat;
 -- Stockage des vidéos/musiques (envoi depuis la télécommande, 50 Mo max)
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('media', 'media', true, 52428800,
-  array['video/mp4','video/webm','audio/mpeg','audio/mp4','audio/wav','audio/ogg'])
+  array['video/mp4','video/webm','audio/mpeg','audio/mp4','audio/wav','audio/ogg','image/png','image/jpeg','image/webp','image/gif'])
 on conflict (id) do nothing;
+
+-- Compétitions enregistrées (nom, logo, équipes avec couleurs) : réservé aux admins
+create table public.competitions (
+  id bigint generated always as identity primary key,
+  name text not null check (char_length(name) between 1 and 26),
+  logo text,
+  teams jsonb not null,
+  created_at timestamptz not null default now()
+);
+alter table public.competitions enable row level security;
+create policy "compétitions: admin" on public.competitions for all
+  using (exists (select 1 from public.admins a where a.user_id = auth.uid()))
+  with check (exists (select 1 from public.admins a where a.user_id = auth.uid()));
 create policy "media: lecture" on storage.objects for select using (bucket_id = 'media');
 create policy "media: admin envoi" on storage.objects for insert
   with check (bucket_id = 'media' and exists (select 1 from public.admins a where a.user_id = auth.uid()));
