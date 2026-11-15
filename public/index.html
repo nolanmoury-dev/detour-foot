@@ -37,7 +37,7 @@ button.b.y{background:#f5c518;border-color:#f5c518;color:#1d0b2a}
 button.b.rd{background:#d6322e;border-color:#d6322e;color:#fff}
 .lbl{font-size:13px;color:var(--mut)}
 h5{margin:14px 0 6px;font:700 14px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
-#castv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px;display:none;z-index:0;background:#000}.vid.cast #castv{display:block}.vid.cast .stage{background:none}.vid .stage{z-index:1}
+#castv,#castv1{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px;display:none;z-index:0;background:#000}.vid.cast #castv,.vid.cast #castv1{display:block}.vid.cast .stage{background:none}.vid .stage{z-index:1}
 .vid{position:relative}.live{position:absolute;right:12px;bottom:10px;background:#e90052;color:#fff;font:700 13px 'Barlow Condensed',sans-serif;letter-spacing:.12em;padding:2px 8px;border-radius:3px;animation:bk 1.3s infinite}
 @keyframes bk{50%{opacity:.5}}
 #chat{height:300px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:8px;font-size:14px}
@@ -166,7 +166,7 @@ body.ov{background:transparent}body.ov::before,body.ov .top,body.ov #v-overlay p
 <select id="sty" aria-label="Style"><option value="pl">Premier League</option><option value="l1">Ligue 1</option><option value="lg">Liga</option></select><button class="b" id="acc" data-a="acc" hidden>Connexion</button></header>
 <main>
 <section id="v-admin"><div class="mini" id="mini"></div><div class="adm" id="adm">
-<div><div class="panel"><h4>Programme</h4><div class="stage" id="s1"></div></div>
+<div><div class="panel"><h4>Programme</h4><div class="vid"><video id="castv1" muted playsinline autoplay></video><div class="stage" id="s1"></div></div></div>
 <div class="panel"><h4>Plein écran</h4><div class="r" id="fsb"><button class="b" data-f="rank">Classement</button><button class="b" data-f="bracket">Arbre du tournoi</button><button class="b" data-f="pitch">Compos terrain</button><button class="b" data-f="list">Compos liste</button><button class="b" data-f="stats">Stats</button><button class="b pk" data-f="">Fermer</button></div></div>
 <div class="panel"><h4>Enregistrement d’écran</h4><div class="r"><button class="b rd" data-a="recs">● Lancer</button><button class="b" data-a="recp">Pause</button><button class="b" data-a="recx">Arrêt</button><b id="rt">00:00</b></div><video id="recv" muted playsinline hidden style="width:100%;max-height:200px;margin-top:8px;border-radius:8px;background:#000"></video><ul class="l" id="recl"></ul><p class="lbl" id="recm">Choisis une fenêtre, un onglet ou l’écran entier. Le fichier se télécharge à l’arrêt. Marche sur ordinateur, pas sur téléphone.</p></div></div>
 <div>
@@ -256,7 +256,7 @@ var RECM='';
 function recMsg(m){var e=$('#recm');if(!RECM)RECM=e.textContent;e.textContent=m||RECM}
 function recStart(){if(sb&&!isAdmin){recMsg('Réservé à l’opérateur : déconnecte-toi, puis connecte-toi avec le pseudo Noln_mry.');return}if(window.self!==window.top){recMsg('Enregistrement bloqué : ouvre le site directement (https://detour-foot1.vercel.app), pas dans un aperçu ou une fenêtre intégrée.');return}var md=navigator.mediaDevices;if(!md||!md.getDisplayMedia||!window.MediaRecorder){recMsg('Enregistrement impossible ici : utilise un ordinateur (Chrome, Edge ou Firefox).');return}
   md.getDisplayMedia({video:true,audio:true}).catch(function(e){if(e&&e.name==='NotAllowedError')throw e;return md.getDisplayMedia({video:true})}).then(function(s){stream=s;chunks=[];var mt=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].filter(function(t){return MediaRecorder.isTypeSupported(t)})[0];mr=new MediaRecorder(s,mt?{mimeType:mt}:undefined);
-    mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};mr.onstop=recSave;s.getVideoTracks()[0].onended=function(){if(mr&&mr.state!=='inactive')recStop()};mr.start(1000);rec.st=1;rec.t=0;csend({t:'start'});var pv=$('#recv');pv.srcObject=s;pv.hidden=false;pv.play().catch(function(){});recMsg('● Enregistrement en cours… clique sur « Arrêt » pour télécharger le fichier.');adm()}).catch(function(e){recMsg(e&&e.name==='NotAllowedError'?'Pas d’enregistrement : choisis une fenêtre dans la liste puis clique sur « Partager ». Sur Mac, autorise aussi ton navigateur dans Réglages > Confidentialité > Enregistrement de l’écran.':'Enregistrement impossible : '+(e&&e.message||e))})}
+    mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};mr.onstop=recSave;s.getVideoTracks()[0].onended=function(){if(mr&&mr.state!=='inactive')recStop()};mr.start(1000);rec.st=1;rec.t=0;csend({t:'start'});localCast(true);var pv=$('#recv');pv.srcObject=s;pv.hidden=false;pv.play().catch(function(){});recMsg('● Enregistrement en cours… clique sur « Arrêt » pour télécharger le fichier.');adm()}).catch(function(e){recMsg(e&&e.name==='NotAllowedError'?'Pas d’enregistrement : choisis une fenêtre dans la liste puis clique sur « Partager ». Sur Mac, autorise aussi ton navigateur dans Réglages > Confidentialité > Enregistrement de l’écran.':'Enregistrement impossible : '+(e&&e.message||e))})}
 function recStop(){castStop();rec.dur=rec.t;rec.st=0;var pv=$('#recv');pv.hidden=true;pv.srcObject=null;try{mr.stop()}catch(e){}if(stream)stream.getTracks().forEach(function(t){t.stop()});adm()}
 function recSave(){rec.n++;var url=URL.createObjectURL(new Blob(chunks,{type:'video/webm'}));rec.list.unshift('Enregistrement '+rec.n+' · '+mm(rec.dur||0)+' · <a href="'+url+'" download="detour-foot-'+rec.n+'.webm">Télécharger</a>');rec.t=0;mr=null;adm()}
 var cast=null,peers={},vpc=null,CID=Math.random().toString(36).slice(2,10),ICE={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
@@ -272,7 +272,8 @@ function castOffer(id){if(peers[id]){try{peers[id].close()}catch(e){}}
   var pc=new RTCPeerConnection(ICE);pc._p=[];peers[id]=pc;stream.getTracks().forEach(function(t){pc.addTrack(t,stream)});
   pc.onicecandidate=function(e){if(e.candidate)csend({t:'ice',to:id,c:e.candidate})};
   pc.createOffer().then(function(o){return pc.setLocalDescription(o)}).then(function(){csend({t:'offer',to:id,sdp:pc.localDescription})}).catch(function(){})}
-function castStop(){Object.keys(peers).forEach(function(k){try{peers[k].close()}catch(e){}});peers={};csend({t:'end'})}
+function localCast(on){['castv','castv1'].forEach(function(i){var v=document.getElementById(i);if(!v)return;v.muted=true;v.srcObject=on?stream:null;if(on)v.play().catch(function(){});v.parentNode.classList.toggle('cast',!!on)})}
+function castStop(){localCast(false);Object.keys(peers).forEach(function(k){try{peers[k].close()}catch(e){}});peers={};csend({t:'end'})}
 function castAnswer(d){if(vpc){try{vpc.close()}catch(e){}}
   var pc=vpc=new RTCPeerConnection(ICE);pc._p=[];
   pc.ontrack=function(e){var v=$('#castv');if(!v)return;v.srcObject=e.streams[0];v.muted=!unlocked;v.play().catch(function(){});document.querySelector('#v-player .vid').classList.add('cast')};
