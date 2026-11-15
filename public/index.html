@@ -253,7 +253,7 @@ function adm(){$('#run').textContent=S.run?'Pause':'Coup d’envoi';$('#mus').te
   $('#recl').innerHTML=rec.list.map(function(x){return '<li>'+x+'</li>'}).join('');[].forEach.call($('#fsb').children,function(b){b.classList.toggle('on',b.dataset.f===S.fs&&S.fs!=='')})}
 var RECM='';
 function recMsg(m){var e=$('#recm');if(!RECM)RECM=e.textContent;e.textContent=m||RECM}
-function recStart(){if(sb&&!isAdmin)return;var md=navigator.mediaDevices;if(!md||!md.getDisplayMedia||!window.MediaRecorder){recMsg('Enregistrement impossible ici : utilise un ordinateur (Chrome, Edge ou Firefox).');return}
+function recStart(){if(sb&&!isAdmin){recMsg('Réservé à l’opérateur : déconnecte-toi, puis connecte-toi avec le pseudo Noln_mry.');return}if(window.self!==window.top){recMsg('Enregistrement bloqué : ouvre le site directement (https://detour-foot1.vercel.app), pas dans un aperçu ou une fenêtre intégrée.');return}var md=navigator.mediaDevices;if(!md||!md.getDisplayMedia||!window.MediaRecorder){recMsg('Enregistrement impossible ici : utilise un ordinateur (Chrome, Edge ou Firefox).');return}
   md.getDisplayMedia({video:true,audio:true}).catch(function(e){if(e&&e.name==='NotAllowedError')throw e;return md.getDisplayMedia({video:true})}).then(function(s){stream=s;chunks=[];var mt=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].filter(function(t){return MediaRecorder.isTypeSupported(t)})[0];mr=new MediaRecorder(s,mt?{mimeType:mt}:undefined);
     mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};mr.onstop=recSave;s.getVideoTracks()[0].onended=function(){if(mr&&mr.state!=='inactive')recStop()};mr.start(1000);rec.st=1;rec.t=0;recMsg('');adm()}).catch(function(e){recMsg(e&&e.name==='NotAllowedError'?'Pas d’enregistrement : choisis une fenêtre dans la liste puis clique sur « Partager ». Sur Mac, autorise aussi ton navigateur dans Réglages > Confidentialité > Enregistrement de l’écran.':'Enregistrement impossible : '+(e&&e.message||e))})}
 function recStop(){rec.dur=rec.t;rec.st=0;try{mr.stop()}catch(e){}if(stream)stream.getTracks().forEach(function(t){t.stop()});adm()}
@@ -268,12 +268,13 @@ var th=$('#th'),ta=$('#ta');T.forEach(function(t,i){th.add(new Option(t[0],i));t
 var COMPS=[],edit=null,PAL=['#1b3f9a','#d6322e','#2f6bff','#c8a54b','#6cabdd','#a50044','#1f8a4c','#f28c28'];
 function fillTeams(){th.innerHTML='';ta.innerHTML='';T.forEach(function(t,i){th.add(new Option(t[0],i));ta.add(new Option(t[0],i))});th.value=S.h;ta.value=S.a}
 function cpm(m){$('#cpm').textContent=m}
+function cerr(e){var m=(e&&e.message)||String(e);if(/row-level security|permission|policy|not authorized/i.test(m))return 'Refusé : ton compte n’est pas opérateur. Connecte-toi avec Noln_mry (compte créé APRÈS avoir lancé schema.sql).';if(/does not exist|relation|schema cache/i.test(m))return 'La table competitions n’existe pas : lance schema.sql dans Supabase > SQL Editor.';if(/bucket/i.test(m))return 'Le dossier de stockage « media » n’existe pas : lance schema.sql dans Supabase.';return m}
 function tcode(n){return n.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z]/g,'').toUpperCase().slice(0,3)||'EQU'}
 function fillComps(sel){var s=$('#cps');s.innerHTML='';if(!COMPS.length){s.add(new Option('Aucune compétition enregistrée',''));return}COMPS.forEach(function(c){s.add(new Option(c.name,c.id))});if(sel)s.value=sel}
 function compSel(){var v=$('#cps').value;for(var i=0;i<COMPS.length;i++)if(String(COMPS[i].id)===v)return COMPS[i];return null}
 function saveLocal(){try{localStorage.setItem('df_comps',JSON.stringify(COMPS));return true}catch(e){cpm('Enregistrement impossible sur cet appareil.');return false}}
 function loadComps(sel){if(!sb){try{COMPS=JSON.parse(localStorage.getItem('df_comps')||'[]')}catch(e){COMPS=[]}fillComps(sel);return}
-  sb.from('competitions').select('*').order('id',{ascending:true}).then(function(r){if(r.error){cpm('Erreur : '+r.error.message+' (as-tu lancé migration-competitions.sql ?)');return}COMPS=r.data||[];fillComps(sel)})}
+  sb.from('competitions').select('*').order('id',{ascending:true}).then(function(r){if(r.error){cpm(cerr(r.error));return}COMPS=r.data||[];fillComps(sel)})}
 function teamRow(n,c){var d=document.createElement('div');d.className='r tr';d.innerHTML='<input type="text" class="tn" placeholder="Nom de l’équipe" maxlength="14"><input type="color" class="tc"><button class="b" data-a="cprm" aria-label="Retirer">✕</button>';d.querySelector('.tn').value=n||'';d.querySelector('.tc').value=c||PAL[$('#cpt').children.length%PAL.length];$('#cpt').appendChild(d)}
 function logoPrev(){var i=$('#cpli');i.hidden=!(edit&&edit.logo);if(edit&&edit.logo)i.src=edit.logo}
 function cpOpen(c){edit={id:c?c.id:null,logo:c?c.logo:null};$('#cpn').value=c?c.name:'';$('#cpt').innerHTML='';(c?c.teams:[['','','#1b3f9a'],['','','#d6322e']]).forEach(function(t){teamRow(t[0],t[2])});logoPrev();$('#cped').hidden=false;cpm('')}
@@ -283,14 +284,14 @@ function cpSave(){var n=$('#cpn').value.trim().toUpperCase();var teams=[].map.ca
   if(!sb){if(edit.id){COMPS=COMPS.map(function(c){return c.id===edit.id?{id:c.id,name:rc.name,logo:rc.logo,teams:rc.teams}:c})}else{rc.id=Date.now();COMPS.push(rc);edit.id=rc.id}
     if(!saveLocal())return;fillComps(edit.id);$('#cped').hidden=true;cpm('Enregistrée ✓ — clique sur « Utiliser » pour l’afficher.');return}
   var q=edit.id?sb.from('competitions').update(rc).eq('id',edit.id).select().single():sb.from('competitions').insert(rc).select().single();
-  cpm('Enregistrement…');q.then(function(r){if(r.error){cpm('Erreur : '+r.error.message+' (as-tu lancé migration-competitions.sql ?)');return}$('#cped').hidden=true;cpm('Enregistrée ✓ — clique sur « Utiliser » pour l’afficher.');loadComps(r.data.id)})}
+  cpm('Enregistrement…');q.then(function(r){if(r.error){cpm(cerr(r.error));return}$('#cped').hidden=true;cpm('Enregistrée ✓ — clique sur « Utiliser » pour l’afficher.');loadComps(r.data.id)})}
 function cpDel(){var c=compSel();if(!c){cpm('Choisis une compétition dans la liste.');return}if(!confirm('Supprimer « '+c.name+' » ?'))return;
   if(!sb){COMPS=COMPS.filter(function(x){return x.id!==c.id});saveLocal();fillComps();cpm('Supprimée.');return}
-  sb.from('competitions').delete().eq('id',c.id).then(function(r){if(r.error){cpm('Erreur : '+r.error.message);return}cpm('Supprimée.');loadComps()})}
+  sb.from('competitions').delete().eq('id',c.id).then(function(r){if(r.error){cpm(cerr(r.error));return}cpm('Supprimée.');loadComps()})}
 $('#cpl').onchange=function(){var f=this.files[0];this.value='';if(!f||!edit)return;if(f.size>2000000){cpm('Image trop lourde (2 Mo max).');return}
   if(!sb){var fr=new FileReader();fr.onload=function(){if(String(fr.result).length>400000){cpm('Image trop lourde pour le mode démo.');return}edit.logo=fr.result;logoPrev()};fr.readAsDataURL(f);return}
   cpm('Envoi du logo…');var path='logos/'+Date.now()+'-'+f.name.replace(/[^\w.-]/g,'_');
-  sb.storage.from('media').upload(path,f,{upsert:true}).then(function(r){if(r.error){cpm('Erreur logo : '+r.error.message+' (as-tu lancé migration-competitions.sql ?)');return}edit.logo=sb.storage.from('media').getPublicUrl(path).data.publicUrl;logoPrev();cpm('Logo prêt, pense à enregistrer.')})};
+  sb.storage.from('media').upload(path,f,{upsert:true}).then(function(r){if(r.error){cpm('Logo : '+cerr(r.error));return}edit.logo=sb.storage.from('media').getPublicUrl(path).data.publicUrl;logoPrev();cpm('Logo prêt, pense à enregistrer.')})};
 th.onchange=function(){S.h=+th.value;commit()};ta.onchange=function(){S.a=+ta.value;commit()};
 $('#cn').oninput=function(){S.comp=esc(this.value.toUpperCase());commit()};$('#cl').onchange=function(){S.logo=this.value;commit()};
 $('#sty').onchange=function(){S.sty=this.value;commit()};
