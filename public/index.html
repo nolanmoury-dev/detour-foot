@@ -237,7 +237,9 @@ function music(){sndUI();if(sb&&isAdmin){synthOff();aud.pause();return}var v=(S.
   if(S.mv&&S.mv.url){synthOff();if(cur!==S.mv.url){cur=S.mv.url;aud.src=cur}aud.volume=v;var pr=aud.play();if(pr&&pr.catch)pr.catch(function(){})}
   else{aud.pause();synthOn();sy.g.gain.value=v}}
 var user=null,ready=false,demo=false,mr=null,chunks=[],stream=null,view='admin',pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx','teams'];
-function push(){if(!sb||!isAdmin)return;var d={};if(S.cd&&cdEnd)S.cd.rem=Math.max(0,cdEnd-Date.now());PUB.forEach(function(k){d[k]=S[k]});sb.from('match_state').update({data:d,updated_at:new Date().toISOString()}).eq('id',1).then(function(r){if(r.error)console.error(r.error)})}
+var lead=false;
+function pushIf(){if(lead)push()}
+function push(){if(!sb||!isAdmin)return;var d={};if(S.cd&&cdEnd)S.cd.rem=Math.max(0,cdEnd-Date.now());PUB.forEach(function(k){d[k]=S[k]});d.src=CID;lead=true;sb.from('match_state').update({data:d,updated_at:new Date().toISOString()}).eq('id',1).then(function(r){if(r.error)console.error(r.error)})}
 function commit(){all();push()}
 function applyFx(f){if(!f||f.id===lastFx)return;lastFx=f.id;var t=T[f.side?S.a:S.h];if(f.k==='g'){S.mute=1;music();setTimeout(function(){S.mute=0;music();adm()},4000);ST.forEach(function(s){s.goal(f.side,t,f.name,f.min)});sys('⚽ BUT de '+t[0]+' ! '+f.name+' '+f.min+'’')}else{ST.forEach(function(s){s.card(f.k,f.name,T[S.h],f.min)})}}
 function logoHtml(){var l=S.logo;if(l==='img')return '<img src="logo.png" alt="">';if(/^(https:\/\/|data:image\/)/.test(l))return '<img src="'+l+'" alt="">';return l}
@@ -364,13 +366,13 @@ document.addEventListener('click',function(e){
   else if(a==='acc'){if(user)sb.auth.signOut().then(function(){gate()});return}
   else if(a==='send'){var c=$('#cm'),raw=c.value.trim();if(raw){c.value='';if(sb)sb.from('chat').insert({name:NAME,msg:raw});else{chat.push(['Moi',esc(raw)]);cr()}}return}
   commit()});
-setInterval(function(){if(S.run)S.sec++;if(rec.st===1)rec.t++;if(isAdmin&&S.run&&S.sec%10===0)push();ST.forEach(function(s){s.bug();s.cdr()});$('#rt').textContent=mm(rec.t);$('#mini').textContent=T[S.h][1]+' '+S.sc[0]+' – '+S.sc[1]+' '+T[S.a][1]+' · '+mm(S.sec)+(S.run?'':' · pause');
-  if(isAdmin&&S.cd&&cdEnd){var rr=cdEnd-Date.now();if(rr<=0&&!kick){kick=1;S.run=1;S.sec=0;S.mus=0;commit()}else if(rr<=-4000){S.cd=null;cdEnd=0;commit()}else if(rr>0&&Math.floor(Date.now()/1000)%5===0)push()}},1000);
+setInterval(function(){if(S.run)S.sec++;if(rec.st===1)rec.t++;if(isAdmin&&lead&&S.run&&S.sec%10===0)push();ST.forEach(function(s){s.bug();s.cdr()});$('#rt').textContent=mm(rec.t);$('#mini').textContent=T[S.h][1]+' '+S.sc[0]+' – '+S.sc[1]+' '+T[S.a][1]+' · '+mm(S.sec)+(S.run?'':' · pause');
+  if(isAdmin&&lead&&S.cd&&cdEnd){var rr=cdEnd-Date.now();if(rr<=0&&!kick){kick=1;S.run=1;S.sec=0;S.mus=0;commit()}else if(rr<=-4000){S.cd=null;cdEnd=0;commit()}else if(rr>0&&Math.floor(Date.now()/1000)%5===0)push()}},1000);
 $('#lp').addEventListener('keydown',function(e){if(e.key==='Enter')document.querySelector('[data-a="login"]').click()});
 if(!sb){ready=true;loadComps()}cr();all();ui();
 if(sb){
   gate();loadState();
-  sb.channel('live').on('postgres_changes',{event:'UPDATE',schema:'public',table:'match_state'},function(p){if(!isAdmin)recv(p.new.data)}).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat'},function(p){chat.push([esc(p.new.name),esc(p.new.msg)]);cr()}).subscribe();
+  sb.channel('live').on('postgres_changes',{event:'UPDATE',schema:'public',table:'match_state'},function(p){var d=p.new.data||{};if(d.src===CID)return;if(isAdmin)lead=false;recv(d);if(isAdmin)fillTeams()}).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat'},function(p){chat.push([esc(p.new.name),esc(p.new.msg)]);cr()}).subscribe();
   sb.from('chat').select('name,msg').order('id',{ascending:false}).limit(50).then(function(r){if(r.data){chat=r.data.reverse().map(function(x){return [esc(x.name),esc(x.msg)]});cr()}});
 }
 var vw=new URLSearchParams(location.search).get('view');
