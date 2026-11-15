@@ -37,6 +37,7 @@ button.b.y{background:#f5c518;border-color:#f5c518;color:#1d0b2a}
 button.b.rd{background:#d6322e;border-color:#d6322e;color:#fff}
 .lbl{font-size:13px;color:var(--mut)}
 h5{margin:14px 0 6px;font:700 14px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+#castv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px;display:none;z-index:0;background:#000}.vid.cast #castv{display:block}.vid.cast .stage{background:none}.vid .stage{z-index:1}
 .vid{position:relative}.live{position:absolute;right:12px;bottom:10px;background:#e90052;color:#fff;font:700 13px 'Barlow Condensed',sans-serif;letter-spacing:.12em;padding:2px 8px;border-radius:3px;animation:bk 1.3s infinite}
 @keyframes bk{50%{opacity:.5}}
 #chat{height:300px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:8px;font-size:14px}
@@ -179,7 +180,7 @@ body.ov{background:transparent}body.ov::before,body.ov .top,body.ov #v-overlay p
 <div class="panel"><h4>Musique</h4><div class="r"><button class="b" data-a="mus" id="mus">Arrêt</button><span class="eq" id="eq"><i></i><i></i><i></i><i></i></span><span class="lbl" id="mn">Ambiance (synthé)</span></div><div class="r"><label class="b">Choisir une vidéo<input type="file" id="mf" accept="video/*,audio/*" hidden></label><button class="b" data-a="msyn">Ambiance synthé</button></div><div class="r"><span class="lbl">Volume</span><input type="range" id="vol" min="0" max="100" value="60"></div><p class="lbl">Jouée sur l’overlay et chez les joueurs, pas sur ce téléphone. Coupée pendant un but.</p></div>
 </div></div></section>
 <section id="v-player" hidden><div class="ply">
-<div><div class="vid"><div class="stage" id="s2"></div><span class="live">● EN DIRECT</span></div>
+<div><div class="vid"><video id="castv" muted playsinline autoplay></video><div class="stage" id="s2"></div><span class="live">● EN DIRECT</span></div>
 <div class="panel" style="margin-top:12px"><h4>Parier</h4><div class="r" id="bb"></div><ul class="l" id="bets"></ul></div>
 <div class="tabs" id="pt"><button class="b pk" data-p="bracket">Arbre en direct</button><button class="b" data-p="rank">Classement</button></div>
 <div class="box" id="pb"><div class="fs"></div></div><p id="enc"></p></div>
@@ -247,7 +248,7 @@ function ui(){var a=$('#acc'),ov=pin==='overlay',np=!!sb&&!isAdmin;$('#gate').hi
   ['admin','overlay'].forEach(function(v){document.querySelector('#nav [data-v="'+v+'"]').hidden=np});
   if(np&&!ov&&(view==='admin'||view==='overlay'))document.querySelector('#nav [data-v="player"]').click()}
 function tr(m){m=String(m||'');if(/invalid login/i.test(m))return 'Pseudo ou mot de passe incorrect.';if(/already registered|already exists/i.test(m))return 'Ce pseudo est déjà pris.';if(/email/i.test(m)&&/invalid/i.test(m))return 'Supabase refuse l’adresse interne : change emailDomain dans config.js (voir le README).';if(/signups? not allowed|disabled/i.test(m))return 'Les inscriptions sont désactivées dans Supabase.';return m}
-function gate(){if(!sb){ui();return}sb.auth.getSession().then(function(r){var s=r.data.session;user=s?s.user:null;isAdmin=false;ready=true;if(!user){music();ui();return}NAME=(user.user_metadata&&user.user_metadata.pseudo)||String(user.email).split('@')[0];sb.from('admins').select('user_id').eq('user_id',user.id).then(function(x){isAdmin=!!(x.data&&x.data.length);if(isAdmin){loadState();loadComps();if(!pin&&view==='player')document.querySelector('#nav [data-v="admin"]').click()}music();ui()})}).catch(function(){ready=true;ui()})}
+function gate(){if(!sb){ui();return}sb.auth.getSession().then(function(r){var s=r.data.session;user=s?s.user:null;isAdmin=false;ready=true;if(!user){music();ui();return}NAME=(user.user_metadata&&user.user_metadata.pseudo)||String(user.email).split('@')[0];sb.from('admins').select('user_id').eq('user_id',user.id).then(function(x){isAdmin=!!(x.data&&x.data.length);if(isAdmin){loadState();loadComps();if(!pin&&view==='player')document.querySelector('#nav [data-v="admin"]').click()}music();ui();castInit()})}).catch(function(){ready=true;ui()})}
 function pb(){var b=$('#pb');b.className='box s-'+S.sty;mount(b.querySelector('.fs'),S.pt);var s=S.sc;$('#enc').innerHTML='<b>Si le score reste ainsi :</b> '+(s[0]>s[1]?T[S.h][0]+' file':s[0]<s[1]?T[S.a][0]+' file':'égalité, prolongations')+(s[0]===s[1]?'':' en finale.')}
 function adm(){$('#run').textContent=S.run?'Pause':'Coup d’envoi';$('#mus').textContent=S.mus?'Marche':'Arrêt';$('#mus').classList.toggle('on',!!S.mus);$('#eq').classList.toggle('on',!!(S.mus&&!S.mute));$('#rt').textContent=mm(rec.t);var rb=document.querySelector('[data-a="recs"]');if(rb)rb.textContent=rec.st?'● En cours':'● Lancer';
   $('#recl').innerHTML=rec.list.map(function(x){return '<li>'+x+'</li>'}).join('');[].forEach.call($('#fsb').children,function(b){b.classList.toggle('on',b.dataset.f===S.fs&&S.fs!=='')})}
@@ -255,9 +256,29 @@ var RECM='';
 function recMsg(m){var e=$('#recm');if(!RECM)RECM=e.textContent;e.textContent=m||RECM}
 function recStart(){if(sb&&!isAdmin){recMsg('Réservé à l’opérateur : déconnecte-toi, puis connecte-toi avec le pseudo Noln_mry.');return}if(window.self!==window.top){recMsg('Enregistrement bloqué : ouvre le site directement (https://detour-foot1.vercel.app), pas dans un aperçu ou une fenêtre intégrée.');return}var md=navigator.mediaDevices;if(!md||!md.getDisplayMedia||!window.MediaRecorder){recMsg('Enregistrement impossible ici : utilise un ordinateur (Chrome, Edge ou Firefox).');return}
   md.getDisplayMedia({video:true,audio:true}).catch(function(e){if(e&&e.name==='NotAllowedError')throw e;return md.getDisplayMedia({video:true})}).then(function(s){stream=s;chunks=[];var mt=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].filter(function(t){return MediaRecorder.isTypeSupported(t)})[0];mr=new MediaRecorder(s,mt?{mimeType:mt}:undefined);
-    mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};mr.onstop=recSave;s.getVideoTracks()[0].onended=function(){if(mr&&mr.state!=='inactive')recStop()};mr.start(1000);rec.st=1;rec.t=0;var pv=$('#recv');pv.srcObject=s;pv.hidden=false;pv.play().catch(function(){});recMsg('● Enregistrement en cours… clique sur « Arrêt » pour télécharger le fichier.');adm()}).catch(function(e){recMsg(e&&e.name==='NotAllowedError'?'Pas d’enregistrement : choisis une fenêtre dans la liste puis clique sur « Partager ». Sur Mac, autorise aussi ton navigateur dans Réglages > Confidentialité > Enregistrement de l’écran.':'Enregistrement impossible : '+(e&&e.message||e))})}
-function recStop(){rec.dur=rec.t;rec.st=0;var pv=$('#recv');pv.hidden=true;pv.srcObject=null;try{mr.stop()}catch(e){}if(stream)stream.getTracks().forEach(function(t){t.stop()});adm()}
+    mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};mr.onstop=recSave;s.getVideoTracks()[0].onended=function(){if(mr&&mr.state!=='inactive')recStop()};mr.start(1000);rec.st=1;rec.t=0;csend({t:'start'});var pv=$('#recv');pv.srcObject=s;pv.hidden=false;pv.play().catch(function(){});recMsg('● Enregistrement en cours… clique sur « Arrêt » pour télécharger le fichier.');adm()}).catch(function(e){recMsg(e&&e.name==='NotAllowedError'?'Pas d’enregistrement : choisis une fenêtre dans la liste puis clique sur « Partager ». Sur Mac, autorise aussi ton navigateur dans Réglages > Confidentialité > Enregistrement de l’écran.':'Enregistrement impossible : '+(e&&e.message||e))})}
+function recStop(){castStop();rec.dur=rec.t;rec.st=0;var pv=$('#recv');pv.hidden=true;pv.srcObject=null;try{mr.stop()}catch(e){}if(stream)stream.getTracks().forEach(function(t){t.stop()});adm()}
 function recSave(){rec.n++;var url=URL.createObjectURL(new Blob(chunks,{type:'video/webm'}));rec.list.unshift('Enregistrement '+rec.n+' · '+mm(rec.dur||0)+' · <a href="'+url+'" download="detour-foot-'+rec.n+'.webm">Télécharger</a>');rec.t=0;mr=null;adm()}
+var cast=null,peers={},vpc=null,CID=Math.random().toString(36).slice(2,10),ICE={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
+function csend(o){if(cast)cast.send({type:'broadcast',event:'sig',payload:o})}
+function addIce(pc,c){if(!pc||!c)return;if(pc.remoteDescription)pc.addIceCandidate(c).catch(function(){});else pc._p.push(c)}
+function flushIce(pc){pc._p.splice(0).forEach(function(c){pc.addIceCandidate(c).catch(function(){})})}
+function castInit(){if(!sb||cast||pin==='overlay')return;cast=sb.channel('cast');
+  cast.on('broadcast',{event:'sig'},function(m){var d=m.payload||{};
+    if(isAdmin){if(d.t==='join'&&stream&&rec.st)castOffer(d.id);else if(d.t==='answer'&&peers[d.id]){var pc=peers[d.id];pc.setRemoteDescription(d.sdp).then(function(){flushIce(pc)}).catch(function(){})}else if(d.t==='ice'&&d.to==='host')addIce(peers[d.id],d.c)}
+    else{if(d.t==='start')csend({t:'join',id:CID});else if(d.t==='end')castEnd();else if(d.t==='offer'&&d.to===CID)castAnswer(d);else if(d.t==='ice'&&d.to===CID)addIce(vpc,d.c)}
+  }).subscribe(function(st){if(st==='SUBSCRIBED'&&!isAdmin)csend({t:'join',id:CID})})}
+function castOffer(id){if(peers[id]){try{peers[id].close()}catch(e){}}
+  var pc=new RTCPeerConnection(ICE);pc._p=[];peers[id]=pc;stream.getTracks().forEach(function(t){pc.addTrack(t,stream)});
+  pc.onicecandidate=function(e){if(e.candidate)csend({t:'ice',to:id,c:e.candidate})};
+  pc.createOffer().then(function(o){return pc.setLocalDescription(o)}).then(function(){csend({t:'offer',to:id,sdp:pc.localDescription})}).catch(function(){})}
+function castStop(){Object.keys(peers).forEach(function(k){try{peers[k].close()}catch(e){}});peers={};csend({t:'end'})}
+function castAnswer(d){if(vpc){try{vpc.close()}catch(e){}}
+  var pc=vpc=new RTCPeerConnection(ICE);pc._p=[];
+  pc.ontrack=function(e){var v=$('#castv');if(!v)return;v.srcObject=e.streams[0];v.muted=!unlocked;v.play().catch(function(){});document.querySelector('#v-player .vid').classList.add('cast')};
+  pc.onicecandidate=function(e){if(e.candidate)csend({t:'ice',to:'host',id:CID,c:e.candidate})};
+  pc.setRemoteDescription(d.sdp).then(function(){flushIce(pc);return pc.createAnswer()}).then(function(a){return pc.setLocalDescription(a)}).then(function(){csend({t:'answer',id:CID,sdp:pc.localDescription})}).catch(function(){})}
+function castEnd(){if(vpc){try{vpc.close()}catch(e){}vpc=null}var v=$('#castv');if(v)v.srcObject=null;document.querySelector('#v-player .vid').classList.remove('cast')}
 function sys(m){chat.push(['',m]);cr()}
 function cr(){var c=$('#chat');c.innerHTML=chat.map(function(m){return m[0]?'<p><b>'+m[0]+'</b> '+m[1]+'</p>':'<p class="s">'+m[1]+'</p>'}).join('');c.scrollTop=c.scrollHeight}
 function esc(s){return s.replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
@@ -316,7 +337,7 @@ document.addEventListener('click',function(e){
   else if(a==='cds'){var ms=Math.min(90,Math.max(1,parseInt($('#cdm').value)||10))*60000;S.cd={id:Date.now(),rem:ms,tot:ms};cdId=S.cd.id;cdEnd=Date.now()+ms;kick=0;S.fs='';S.run=0;S.sec=0;S.mus=1}
   else if(a==='cdx'){S.cd=null;cdEnd=0;S.mus=0}
   else if(a==='msyn')S.mv=null;
-  else if(a==='snd'){unlocked=true;music();return}
+  else if(a==='snd'){unlocked=true;var cv=$('#castv');if(cv)cv.muted=false;music();return}
   else if(a==='mus')S.mus=S.mus?0:1;
   else if(a==='recs'){if(!rec.st)recStart();return}
   else if(a==='recp'){if(mr&&rec.st){if(rec.st===1){mr.pause();rec.st=2}else{mr.resume();rec.st=1}adm()}return}
