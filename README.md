@@ -50,5 +50,11 @@ Ouvre le site sur ton téléphone, onglet **Admin**, connecte-toi avec ton pseud
 ## Ce qui est synchronisé
 Score, chrono, équipes, compétition, style, buts et cartons (animations), phrases, plein écran : l'admin écrit dans `match_state`, tous les écrans reçoivent via Supabase Realtime. Le chat et les paris passent par les tables `chat` et `bets`.
 
+## Enregistrement d'écran (admin uniquement)
+Dans l'onglet Admin, « Lancer » ouvre le choix d'une fenêtre, d'un onglet ou de l'écran entier ; « Arrêt » télécharge le fichier `.webm`. Ça marche sur ordinateur (Chrome, Edge, Firefox), pas sur téléphone (les navigateurs mobiles ne le permettent pas). Le fichier reste sur ton appareil.
+
+## Si l'écran de connexion n'apparaît pas
+Le site affiche l'écran « Se connecter / Créer un compte » dès que `public/config.js` contient l'URL et la clé Supabase. Sans elles, il affiche un message et un bouton « Voir en mode démo ». Après avoir rempli `config.js`, fais `git push`, attends le redéploiement Vercel, puis recharge la page (Ctrl+Maj+R, ou ferme et rouvre l'onglet sur téléphone).
+
 ## Pas encore réel
-Musique et enregistrement d'écran (maquettes), compos/classement/arbre (données d'exemple), pas de logos de clubs.
+Musique synthé simple, compos/classement/arbre (données d'exemple), pas de logos de clubs.

@@ -156,7 +156,7 @@ body.ov{background:transparent}body.ov::before,body.ov .top,body.ov #v-overlay p
 <body>
 <div id="gate"><div class="gbox"><img src="logo.png" alt=""><h1>DÉTOUR FOOT</h1>
 <div id="gload"><div class="spin"></div><p class="lbl">Chargement…</p></div>
-<div id="gform" hidden><p class="lbl">Connecte-toi ou crée ton compte pour entrer.</p><div class="col"><input type="text" id="le" placeholder="Pseudo" maxlength="20" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"><input type="password" id="lp" placeholder="Mot de passe" autocomplete="current-password"><button class="b pk" data-a="login">Se connecter</button><button class="b" data-a="signup">Créer un compte</button></div><p id="lerr" class="lbl err"></p><p class="lbl">Pseudo : 3 à 20 caractères (lettres, chiffres, _). Mot de passe : 6 caractères minimum.</p></div></div></div>
+<div id="gform" hidden><p class="lbl">Connecte-toi ou crée ton compte pour entrer.</p><div class="col"><input type="text" id="le" placeholder="Pseudo" maxlength="20" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"><input type="password" id="lp" placeholder="Mot de passe" autocomplete="current-password"><button class="b pk" data-a="login">Se connecter</button><button class="b" data-a="signup">Créer un compte</button></div><p id="lerr" class="lbl err"></p><p class="lbl err" id="gcfg" hidden>Le site n’est pas encore relié à Supabase : remplis url et anonKey dans public/config.js, puis redéploie.</p><button class="b" data-a="demo" id="gdemo" hidden>Voir en mode démo</button><p class="lbl">Pseudo : 3 à 20 caractères (lettres, chiffres, _). Mot de passe : 6 caractères minimum.</p></div></div></div>
 <header class="top"><img class="blogo" src="logo.png" alt=""><span class="brand">DÉTOUR FOOT</span>
 <nav id="nav"><button data-v="admin" class="on">Admin</button><button data-v="player">Joueur</button><button data-v="overlay">Overlay</button></nav>
 <select id="sty" aria-label="Style"><option value="pl">Premier League</option><option value="l1">Ligue 1</option><option value="lg">Liga</option></select><button class="b" id="acc" data-a="acc" hidden>Connexion</button></header>
@@ -164,7 +164,7 @@ body.ov{background:transparent}body.ov::before,body.ov .top,body.ov #v-overlay p
 <section id="v-admin"><div class="mini" id="mini"></div><div class="adm" id="adm">
 <div><div class="panel"><h4>Programme</h4><div class="stage" id="s1"></div></div>
 <div class="panel"><h4>Plein écran</h4><div class="r" id="fsb"><button class="b" data-f="rank">Classement</button><button class="b" data-f="bracket">Arbre du tournoi</button><button class="b" data-f="pitch">Compos terrain</button><button class="b" data-f="list">Compos liste</button><button class="b" data-f="stats">Stats</button><button class="b pk" data-f="">Fermer</button></div></div>
-<div class="panel"><h4>Enregistrement d’écran</h4><div class="r"><button class="b rd" data-a="recs">● Lancer</button><button class="b" data-a="recp">Pause</button><button class="b" data-a="recx">Arrêt</button><b id="rt">00:00</b></div><ul class="l" id="recl"></ul><p class="lbl">Maquette : aucun fichier réel n’est enregistré.</p></div></div>
+<div class="panel"><h4>Enregistrement d’écran</h4><div class="r"><button class="b rd" data-a="recs">● Lancer</button><button class="b" data-a="recp">Pause</button><button class="b" data-a="recx">Arrêt</button><b id="rt">00:00</b></div><ul class="l" id="recl"></ul><p class="lbl" id="recm">Choisis une fenêtre, un onglet ou l’écran entier. Le fichier se télécharge à l’arrêt. Marche sur ordinateur, pas sur téléphone.</p></div></div>
 <div>
 <div class="panel"><h4>Avant-match</h4><div class="r"><button class="b" data-m="5">5 min</button><button class="b" data-m="10">10 min</button><button class="b" data-m="15">15 min</button><input type="text" id="cdm" inputmode="numeric" value="10" style="max-width:70px"><span class="lbl">min</span></div><div class="r"><button class="b pk" data-a="cds">Lancer le compte à rebours</button><button class="b" data-a="cdx">Arrêter</button></div><p class="lbl">Écran « Coup d’envoi dans… » en plein écran, avec la musique. À zéro : le match démarre et la musique s’arrête.</p></div>
 <div class="panel"><h4>Match</h4><div class="r"><select id="th"></select><span>vs</span><select id="ta"></select></div><div class="r"><button class="b pk" data-a="run" id="run">Coup d’envoi</button></div>
@@ -230,13 +230,13 @@ function music(){sndUI();if(sb&&isAdmin){synthOff();aud.pause();return}var v=(S.
   if(!(S.mus&&!S.mute&&unlocked)){synthOff();aud.pause();return}
   if(S.mv&&S.mv.url){synthOff();if(cur!==S.mv.url){cur=S.mv.url;aud.src=cur}aud.volume=v;var pr=aud.play();if(pr&&pr.catch)pr.catch(function(){})}
   else{aud.pause();synthOn();sy.g.gain.value=v}}
-var user=null,ready=false,view='admin',pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx'];
+var user=null,ready=false,demo=false,mr=null,chunks=[],stream=null,view='admin',pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx'];
 function push(){if(!sb||!isAdmin)return;var d={};if(S.cd&&cdEnd)S.cd.rem=Math.max(0,cdEnd-Date.now());PUB.forEach(function(k){d[k]=S[k]});sb.from('match_state').update({data:d,updated_at:new Date().toISOString()}).eq('id',1).then(function(r){if(r.error)console.error(r.error)})}
 function commit(){all();push()}
 function applyFx(f){if(!f||f.id===lastFx)return;lastFx=f.id;var t=T[f.side?S.a:S.h];if(f.k==='g'){S.mute=1;music();setTimeout(function(){S.mute=0;music();adm()},4000);ST.forEach(function(s){s.goal(f.side,t,f.name,f.min)});sys('⚽ BUT de '+t[0]+' ! '+f.name+' '+f.min+'’')}else{ST.forEach(function(s){s.card(f.k,f.name,T[S.h],f.min)})}}
 function recv(d,first){PUB.forEach(function(k){if(d[k]!==undefined)S[k]=d[k]});if(first)lastFx=d.fx?d.fx.id:0;if(S.cd){if(S.cd.id!==cdId){cdId=S.cd.id;cdEnd=Date.now()+S.cd.rem}}else{cdEnd=0;cdId=0}all();applyFx(S.fx)}
 function loadState(){if(!sb)return;sb.from('match_state').select('data').eq('id',1).single().then(function(r){if(r.data&&r.data.data&&r.data.data.h!==undefined){recv(r.data.data,true);th.value=S.h;ta.value=S.a;$('#cl').value=S.logo}})}
-function ui(){var a=$('#acc'),ov=pin==='overlay',np=!!sb&&!isAdmin;$('#gate').hidden=!sb||ov||(ready&&!!user);$('#gload').hidden=ready;$('#gform').hidden=!ready;
+function ui(){var a=$('#acc'),ov=pin==='overlay',np=!!sb&&!isAdmin;$('#gate').hidden=ov||demo||(!!sb&&ready&&!!user);$('#gload').hidden=ready;$('#gform').hidden=!ready;$('#gcfg').hidden=!!sb;$('#gdemo').hidden=!!sb;
   $('#adm').hidden=np;a.hidden=!sb||ov||!user;a.textContent=user?NAME+' · Déconnexion':'';
   ['admin','overlay'].forEach(function(v){document.querySelector('#nav [data-v="'+v+'"]').hidden=np});
   if(np&&!ov&&(view==='admin'||view==='overlay'))document.querySelector('#nav [data-v="player"]').click()}
@@ -245,6 +245,13 @@ function gate(){if(!sb){ui();return}sb.auth.getSession().then(function(r){var s=
 function pb(){var b=$('#pb');b.className='box s-'+S.sty;mount(b.querySelector('.fs'),S.pt);var s=S.sc;$('#enc').innerHTML='<b>Si le score reste ainsi :</b> '+(s[0]>s[1]?T[S.h][0]+' file':s[0]<s[1]?T[S.a][0]+' file':'égalité, prolongations')+(s[0]===s[1]?'':' en finale.')}
 function adm(){$('#run').textContent=S.run?'Pause':'Coup d’envoi';$('#mus').textContent=S.mus?'Marche':'Arrêt';$('#mus').classList.toggle('on',!!S.mus);$('#eq').classList.toggle('on',!!(S.mus&&!S.mute));$('#rt').textContent=mm(rec.t);
   $('#recl').innerHTML=rec.list.map(function(x){return '<li>'+x+'</li>'}).join('');[].forEach.call($('#fsb').children,function(b){b.classList.toggle('on',b.dataset.f===S.fs&&S.fs!=='')})}
+var RECM='';
+function recMsg(m){var e=$('#recm');if(!RECM)RECM=e.textContent;e.textContent=m||RECM}
+function recStart(){if(sb&&!isAdmin)return;var md=navigator.mediaDevices;if(!md||!md.getDisplayMedia||!window.MediaRecorder){recMsg('Enregistrement impossible ici : utilise un ordinateur (Chrome, Edge ou Firefox).');return}
+  md.getDisplayMedia({video:true,audio:true}).then(function(s){stream=s;chunks=[];var mt=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].filter(function(t){return MediaRecorder.isTypeSupported(t)})[0];mr=new MediaRecorder(s,mt?{mimeType:mt}:undefined);
+    mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};mr.onstop=recSave;s.getVideoTracks()[0].onended=function(){if(mr&&mr.state!=='inactive')recStop()};mr.start(1000);rec.st=1;rec.t=0;recMsg('');adm()}).catch(function(){recMsg('Enregistrement annulé ou refusé.')})}
+function recStop(){rec.dur=rec.t;rec.st=0;try{mr.stop()}catch(e){}if(stream)stream.getTracks().forEach(function(t){t.stop()});adm()}
+function recSave(){rec.n++;var url=URL.createObjectURL(new Blob(chunks,{type:'video/webm'}));rec.list.unshift('Enregistrement '+rec.n+' · '+mm(rec.dur||0)+' · <a href="'+url+'" download="detour-foot-'+rec.n+'.webm">Télécharger</a>');rec.t=0;mr=null;adm()}
 function sys(m){chat.push(['',m]);cr()}
 function cr(){var c=$('#chat');c.innerHTML=chat.map(function(m){return m[0]?'<p><b>'+m[0]+'</b> '+m[1]+'</p>':'<p class="s">'+m[1]+'</p>'}).join('');c.scrollTop=c.scrollHeight}
 function esc(s){return s.replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
@@ -278,22 +285,24 @@ document.addEventListener('click',function(e){
   else if(a==='msyn')S.mv=null;
   else if(a==='snd'){unlocked=true;music();return}
   else if(a==='mus')S.mus=S.mus?0:1;
-  else if(a==='recs'){rec.st=1;if(!rec.t)rec.t=0}
-  else if(a==='recp')rec.st=rec.st===1?2:rec.st===2?1:0;
-  else if(a==='recx'){if(rec.st||rec.t){rec.n++;rec.list.unshift('Enregistrement '+rec.n+' · '+mm(rec.t))}rec.st=0;rec.t=0}
+  else if(a==='recs'){if(!rec.st)recStart();return}
+  else if(a==='recp'){if(mr&&rec.st){if(rec.st===1){mr.pause();rec.st=2}else{mr.resume();rec.st=1}adm()}return}
+  else if(a==='recx'){if(mr&&rec.st)recStop();return}
   else if(a==='login'||a==='signup'){var ps=$('#le').value.trim(),pw=$('#lp').value,er=$('#lerr');
+    if(!sb){er.textContent='Le site n’est pas relié à Supabase (voir config.js).';return}
     if(!/^[A-Za-z0-9_]{3,20}$/.test(ps)){er.textContent='Pseudo : 3 à 20 caractères (lettres, chiffres, _).';return}
     if(pw.length<6){er.textContent='Mot de passe : 6 caractères minimum.';return}
     er.textContent='…';var mail=ps.toLowerCase()+'@'+(CFG.emailDomain||'gmail.com');
     var rq=a==='login'?sb.auth.signInWithPassword({email:mail,password:pw}):sb.auth.signUp({email:mail,password:pw,options:{data:{pseudo:ps}}});
     rq.then(function(r){if(r.error){er.textContent=tr(r.error.message);return}if(!r.data.session){er.textContent='Compte créé, mais Supabase attend une confirmation par e-mail : désactive « Confirm email » (voir le README).';return}er.textContent='';$('#lp').value='';ready=false;ui();gate()});return}
+  else if(a==='demo'){demo=true;ui();return}
   else if(a==='acc'){if(user)sb.auth.signOut().then(function(){gate()});return}
   else if(a==='send'){var c=$('#cm'),raw=c.value.trim();if(raw){c.value='';if(sb)sb.from('chat').insert({name:NAME,msg:raw});else{chat.push(['Moi',esc(raw)]);cr()}}return}
   commit()});
 setInterval(function(){if(S.run)S.sec++;if(rec.st===1)rec.t++;if(isAdmin&&S.run&&S.sec%10===0)push();ST.forEach(function(s){s.bug();s.cdr()});$('#rt').textContent=mm(rec.t);$('#mini').textContent=T[S.h][1]+' '+S.sc[0]+' – '+S.sc[1]+' '+T[S.a][1]+' · '+mm(S.sec)+(S.run?'':' · pause');
   if(isAdmin&&S.cd&&cdEnd){var rr=cdEnd-Date.now();if(rr<=0&&!kick){kick=1;S.run=1;S.sec=0;S.mus=0;commit()}else if(rr<=-4000){S.cd=null;cdEnd=0;commit()}else if(rr>0&&Math.floor(Date.now()/1000)%5===0)push()}},1000);
 $('#lp').addEventListener('keydown',function(e){if(e.key==='Enter')document.querySelector('[data-a="login"]').click()});
-cr();all();ui();
+if(!sb)ready=true;cr();all();ui();
 if(sb){
   gate();loadState();
   sb.channel('live').on('postgres_changes',{event:'UPDATE',schema:'public',table:'match_state'},function(p){if(!isAdmin)recv(p.new.data)}).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat'},function(p){chat.push([esc(p.new.name),esc(p.new.msg)]);cr()}).subscribe();
