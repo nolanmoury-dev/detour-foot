@@ -145,9 +145,11 @@ body.ov{background:transparent}body.ov::before,body.ov .top,body.ov #v-overlay p
 <body>
 <header class="top"><img class="blogo" src="logo.png" alt=""><span class="brand">DÉTOUR FOOT</span>
 <nav id="nav"><button data-v="admin" class="on">Admin</button><button data-v="player">Joueur</button><button data-v="overlay">Overlay</button></nav>
-<select id="sty" aria-label="Style"><option value="pl">Premier League</option><option value="l1">Ligue 1</option><option value="lg">Liga</option></select></header>
+<select id="sty" aria-label="Style"><option value="pl">Premier League</option><option value="l1">Ligue 1</option><option value="lg">Liga</option></select><button class="b" id="acc" data-a="acc" hidden>Connexion</button></header>
 <main>
-<section id="v-admin"><div class="mini" id="mini"></div><div class="panel" id="login" hidden><h4>Connexion admin</h4><div class="r"><input type="text" id="le" placeholder="E-mail"><input type="password" id="lp" placeholder="Mot de passe"></div><div class="r"><button class="b pk" data-a="login">Se connecter</button><span id="lerr" class="lbl"></span></div></div><div class="adm" id="adm">
+<div class="panel" id="login" hidden><h4>Connexion</h4><div class="r"><input type="text" id="le" placeholder="Pseudo" maxlength="20" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"><input type="password" id="lp" placeholder="Mot de passe" autocomplete="current-password"></div><div class="r"><button class="b pk" data-a="login">Se connecter</button><button class="b" data-a="signup">Créer un compte</button><span id="lerr" class="lbl"></span></div><p class="lbl">Pseudo : 3 à 20 caractères (lettres, chiffres, _). Mot de passe : 6 caractères minimum.</p></div>
+<p class="lbl" id="noadm" hidden>Ce compte n’est pas opérateur : la télécommande lui est réservée. Va dans l’onglet Joueur pour le chat et les paris.</p>
+<section id="v-admin"><div class="mini" id="mini"></div><div class="adm" id="adm">
 <div><div class="panel"><h4>Programme</h4><div class="stage" id="s1"></div></div>
 <div class="panel"><h4>Plein écran</h4><div class="r" id="fsb"><button class="b" data-f="rank">Classement</button><button class="b" data-f="bracket">Arbre du tournoi</button><button class="b" data-f="pitch">Compos terrain</button><button class="b" data-f="list">Compos liste</button><button class="b" data-f="stats">Stats</button><button class="b pk" data-f="">Fermer</button></div></div>
 <div class="panel"><h4>Enregistrement d’écran</h4><div class="r"><button class="b rd" data-a="recs">● Lancer</button><button class="b" data-a="recp">Pause</button><button class="b" data-a="recx">Arrêt</button><b id="rt">00:00</b></div><ul class="l" id="recl"></ul><p class="lbl">Maquette : aucun fichier réel n’est enregistré.</p></div></div>
@@ -216,14 +218,18 @@ function music(){sndUI();if(sb&&isAdmin){synthOff();aud.pause();return}var v=(S.
   if(!(S.mus&&!S.mute&&unlocked)){synthOff();aud.pause();return}
   if(S.mv&&S.mv.url){synthOff();if(cur!==S.mv.url){cur=S.mv.url;aud.src=cur}aud.volume=v;var pr=aud.play();if(pr&&pr.catch)pr.catch(function(){})}
   else{aud.pause();synthOn();sy.g.gain.value=v}}
-var CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx'];
+var user=null,view='admin',wantLogin=false,pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx'];
 function push(){if(!sb||!isAdmin)return;var d={};if(S.cd&&cdEnd)S.cd.rem=Math.max(0,cdEnd-Date.now());PUB.forEach(function(k){d[k]=S[k]});sb.from('match_state').update({data:d,updated_at:new Date().toISOString()}).eq('id',1).then(function(r){if(r.error)console.error(r.error)})}
 function commit(){all();push()}
 function applyFx(f){if(!f||f.id===lastFx)return;lastFx=f.id;var t=T[f.side?S.a:S.h];if(f.k==='g'){S.mute=1;music();setTimeout(function(){S.mute=0;music();adm()},4000);ST.forEach(function(s){s.goal(f.side,t,f.name,f.min)});sys('⚽ BUT de '+t[0]+' ! '+f.name+' '+f.min+'’')}else{ST.forEach(function(s){s.card(f.k,f.name,T[S.h],f.min)})}}
 function recv(d,first){PUB.forEach(function(k){if(d[k]!==undefined)S[k]=d[k]});if(first)lastFx=d.fx?d.fx.id:0;if(S.cd){if(S.cd.id!==cdId){cdId=S.cd.id;cdEnd=Date.now()+S.cd.rem}}else{cdEnd=0;cdId=0}all();applyFx(S.fx)}
 function loadState(){if(!sb)return;sb.from('match_state').select('data').eq('id',1).single().then(function(r){if(r.data&&r.data.data&&r.data.data.h!==undefined){recv(r.data.data,true);th.value=S.h;ta.value=S.a;$('#cl').value=S.logo}})}
-function showLogin(b){$('#login').hidden=!b;$('#adm').hidden=b}
-function gate(){if(!sb)return;sb.auth.getSession().then(function(r){var u=r.data.session&&r.data.session.user;if(!u){isAdmin=false;showLogin(true);return}sb.from('admins').select('user_id').eq('user_id',u.id).then(function(x){isAdmin=!!(x.data&&x.data.length);showLogin(!isAdmin);if(isAdmin)loadState();else $('#lerr').textContent='Ce compte n’est pas admin.'})})}
+function ui(){var a=$('#acc');$('#login').hidden=!(sb&&!user&&(wantLogin||view==='admin'));$('#adm').hidden=!!sb&&!isAdmin;$('#noadm').hidden=!(sb&&user&&!isAdmin&&view==='admin');a.hidden=!sb||document.body.classList.contains('ov');a.textContent=user?NAME+' · Déconnexion':'Connexion';
+  document.querySelector('#nav [data-v="admin"]').hidden=!!sb&&!isAdmin;
+  if(sb&&!isAdmin&&view==='admin')document.querySelector('#nav [data-v="player"]').click()}
+function need(m){wantLogin=true;ui();$('#lerr').textContent=m;window.scrollTo(0,0)}
+function tr(m){m=String(m||'');if(/invalid login/i.test(m))return 'Pseudo ou mot de passe incorrect.';if(/already registered|already exists/i.test(m))return 'Ce pseudo est déjà pris.';if(/email/i.test(m)&&/invalid/i.test(m))return 'Supabase refuse l’adresse interne : change emailDomain dans config.js (voir le README).';if(/signups? not allowed|disabled/i.test(m))return 'Les inscriptions sont désactivées dans Supabase.';return m}
+function gate(){if(!sb){ui();return}sb.auth.getSession().then(function(r){var s=r.data.session;user=s?s.user:null;isAdmin=false;if(!user){music();ui();return}NAME=(user.user_metadata&&user.user_metadata.pseudo)||String(user.email).split('@')[0];sb.from('admins').select('user_id').eq('user_id',user.id).then(function(x){isAdmin=!!(x.data&&x.data.length);if(isAdmin){loadState();if(!pin&&view==='player')document.querySelector('#nav [data-v="admin"]').click()}music();ui()})})}
 function pb(){var b=$('#pb');b.className='box s-'+S.sty;mount(b.querySelector('.fs'),S.pt);var s=S.sc;$('#enc').innerHTML='<b>Si le score reste ainsi :</b> '+(s[0]>s[1]?T[S.h][0]+' file':s[0]<s[1]?T[S.a][0]+' file':'égalité, prolongations')+(s[0]===s[1]?'':' en finale.')}
 function adm(){$('#run').textContent=S.run?'Pause':'Coup d’envoi';$('#mus').textContent=S.mus?'Marche':'Arrêt';$('#mus').classList.toggle('on',!!S.mus);$('#eq').classList.toggle('on',!!(S.mus&&!S.mute));$('#rt').textContent=mm(rec.t);
   $('#recl').innerHTML=rec.list.map(function(x){return '<li>'+x+'</li>'}).join('');[].forEach.call($('#fsb').children,function(b){b.classList.toggle('on',b.dataset.f===S.fs&&S.fs!=='')})}
@@ -243,10 +249,10 @@ PH.forEach(function(p,i){var b=document.createElement('button');b.className='b';
 T.slice(0,3).forEach(function(){});
 [['Gagne','#'],['Nul','#'],['Perd','#']].forEach(function(x,i){var b=document.createElement('button');b.className='b';b.dataset.b=i;b.textContent=['Domicile gagne','Match nul','Extérieur gagne'][i]+' · 10 pts';$('#bb').appendChild(b)});
 document.addEventListener('click',function(e){
-  var n=e.target.closest('#nav button');if(n){['admin','player','overlay'].forEach(function(v){$('#v-'+v).hidden=v!==n.dataset.v});[].forEach.call($('#nav').children,function(b){b.classList.toggle('on',b===n)});all();return}
+  var n=e.target.closest('#nav button');if(n){['admin','player','overlay'].forEach(function(v){$('#v-'+v).hidden=v!==n.dataset.v});[].forEach.call($('#nav').children,function(b){b.classList.toggle('on',b===n)});view=n.dataset.v;wantLogin=false;ui();all();return}
   var f=e.target.closest('[data-f]');if(f){S.fs=f.dataset.f;commit();return}
   var p=e.target.closest('#pt [data-p]');if(p){S.pt=p.dataset.p;[].forEach.call($('#pt').children,function(b){b.classList.toggle('pk',b===p)});pb();return}
-  var bt=e.target.closest('[data-b]');if(bt){var i=+bt.dataset.b;if(sb)sb.from('bets').insert({pick:i});bets.push([T[S.h][1]+' gagne',T[S.a][1]+' gagne'][i===0?0:1]);bets[bets.length-1]=['Domicile ('+T[S.h][1]+') gagne','Match nul','Extérieur ('+T[S.a][1]+') gagne'][i]+' · 10 pts';$('#bets').innerHTML=bets.map(function(x){return '<li>'+x+'</li>'}).join('');return}
+  var bt=e.target.closest('[data-b]');if(bt){if(sb&&!user){need('Connecte-toi pour parier.');return}var i=+bt.dataset.b;if(sb)sb.from('bets').insert({pick:i});bets.push([T[S.h][1]+' gagne',T[S.a][1]+' gagne'][i===0?0:1]);bets[bets.length-1]=['Domicile ('+T[S.h][1]+') gagne','Match nul','Extérieur ('+T[S.a][1]+') gagne'][i]+' · 10 pts';$('#bets').innerHTML=bets.map(function(x){return '<li>'+x+'</li>'}).join('');return}
   var pi=e.target.closest('[data-i]');if(pi){var x=PH[+pi.dataset.i];S.lt={tag:x[0],text:x[1],id:Date.now()};commit();return}
   var qm=e.target.closest('[data-m]');if(qm){$('#cdm').value=qm.dataset.m;return}
   var a=e.target.closest('[data-a]');if(!a)return;a=a.dataset.a;
@@ -263,12 +269,19 @@ document.addEventListener('click',function(e){
   else if(a==='recs'){rec.st=1;if(!rec.t)rec.t=0}
   else if(a==='recp')rec.st=rec.st===1?2:rec.st===2?1:0;
   else if(a==='recx'){if(rec.st||rec.t){rec.n++;rec.list.unshift('Enregistrement '+rec.n+' · '+mm(rec.t))}rec.st=0;rec.t=0}
-  else if(a==='login'){sb.auth.signInWithPassword({email:$('#le').value,password:$('#lp').value}).then(function(r){$('#lerr').textContent=r.error?r.error.message:'';gate()});return}
-  else if(a==='send'){var c=$('#cm'),raw=c.value.trim();if(raw){c.value='';if(sb)sb.from('chat').insert({name:NAME,msg:raw});else{chat.push(['Moi',esc(raw)]);cr()}}return}
+  else if(a==='login'||a==='signup'){var ps=$('#le').value.trim(),pw=$('#lp').value,er=$('#lerr');
+    if(!/^[A-Za-z0-9_]{3,20}$/.test(ps)){er.textContent='Pseudo : 3 à 20 caractères (lettres, chiffres, _).';return}
+    if(pw.length<6){er.textContent='Mot de passe : 6 caractères minimum.';return}
+    er.textContent='…';var mail=ps.toLowerCase()+'@'+(CFG.emailDomain||'gmail.com');
+    var rq=a==='login'?sb.auth.signInWithPassword({email:mail,password:pw}):sb.auth.signUp({email:mail,password:pw,options:{data:{pseudo:ps}}});
+    rq.then(function(r){if(r.error){er.textContent=tr(r.error.message);return}if(!r.data.session){er.textContent='Compte créé, mais Supabase attend une confirmation par e-mail : désactive « Confirm email » (voir le README).';return}er.textContent='';$('#lp').value='';wantLogin=false;gate()});return}
+  else if(a==='acc'){if(user){sb.auth.signOut().then(function(){gate()})}else{wantLogin=true;ui();window.scrollTo(0,0)}return}
+  else if(a==='send'){if(sb&&!user){need('Connecte-toi pour écrire dans le chat.');return}var c=$('#cm'),raw=c.value.trim();if(raw){c.value='';if(sb)sb.from('chat').insert({name:NAME,msg:raw});else{chat.push(['Moi',esc(raw)]);cr()}}return}
   commit()});
 setInterval(function(){if(S.run)S.sec++;if(rec.st===1)rec.t++;if(isAdmin&&S.run&&S.sec%10===0)push();ST.forEach(function(s){s.bug();s.cdr()});$('#rt').textContent=mm(rec.t);$('#mini').textContent=T[S.h][1]+' '+S.sc[0]+' – '+S.sc[1]+' '+T[S.a][1]+' · '+mm(S.sec)+(S.run?'':' · pause');
   if(isAdmin&&S.cd&&cdEnd){var rr=cdEnd-Date.now();if(rr<=0&&!kick){kick=1;S.run=1;S.sec=0;S.mus=0;commit()}else if(rr<=-4000){S.cd=null;cdEnd=0;commit()}else if(rr>0&&Math.floor(Date.now()/1000)%5===0)push()}},1000);
-cr();all();
+$('#lp').addEventListener('keydown',function(e){if(e.key==='Enter')document.querySelector('[data-a="login"]').click()});
+cr();all();ui();
 if(sb){
   gate();loadState();
   sb.channel('live').on('postgres_changes',{event:'UPDATE',schema:'public',table:'match_state'},function(p){if(!isAdmin)recv(p.new.data)}).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat'},function(p){chat.push([esc(p.new.name),esc(p.new.msg)]);cr()}).subscribe();

@@ -17,12 +17,14 @@ create table public.chat (
   id bigint generated always as identity primary key,
   name text not null check (char_length(name) between 1 and 30),
   msg text not null check (char_length(msg) between 1 and 120),
+  user_id uuid default auth.uid(),
   created_at timestamptz not null default now()
 );
 
 create table public.bets (
   id bigint generated always as identity primary key,
   pick smallint not null check (pick between 0 and 2),
+  user_id uuid default auth.uid(),
   created_at timestamptz not null default now()
 );
 
@@ -40,11 +42,24 @@ create policy "état: admin" on public.match_state for update
 -- Un compte ne voit que sa propre ligne admin
 create policy "admins: soi-même" on public.admins for select using (user_id = auth.uid());
 
--- Chat et paris ouverts aux visiteurs (limites de taille dans les tables)
+-- Chat et paris : lecture pour tous, écriture réservée aux comptes connectés
 create policy "chat: lecture" on public.chat for select using (true);
-create policy "chat: écriture" on public.chat for insert with check (true);
+create policy "chat: écriture" on public.chat for insert to authenticated with check (user_id = auth.uid());
 create policy "paris: lecture" on public.bets for select using (true);
-create policy "paris: écriture" on public.bets for insert with check (true);
+create policy "paris: écriture" on public.bets for insert to authenticated with check (user_id = auth.uid());
+
+-- Compte opérateur : le pseudo Noln_mry devient admin dès qu'il est créé sur le site
+-- (adresse interne = pseudo + emailDomain de public/config.js, ici gmail.com)
+create or replace function public.make_operator() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if lower(new.email) = 'noln_mry@gmail.com' then
+    insert into public.admins (user_id) values (new.id) on conflict do nothing;
+  end if;
+  return new;
+end $$;
+create trigger on_auth_user_operator after insert on auth.users
+  for each row execute function public.make_operator();
 
 -- Temps réel
 alter publication supabase_realtime add table public.match_state, public.chat;
