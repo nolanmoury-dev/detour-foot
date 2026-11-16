@@ -1,0 +1,87 @@
+-- À lancer UNE fois dans Supabase > SQL Editor (après migration-matchs.sql).
+-- Ballons (points), paris, compos par match, vidéos de pub / ralentis.
+
+-- Compos modifiables avant chaque match
+alter table public.matches add column if not exists lh jsonb, add column if not exists la jsonb;
+alter table public.predictions add column if not exists paid boolean not null default false;
+
+-- Vidéos de la photothèque (iPhone .mov, .m4v) et ralentis acceptés dans le stockage
+update storage.buckets set allowed_mime_types = array[
+  'video/mp4','video/webm','video/quicktime','video/x-m4v',
+  'audio/mpeg','audio/mp4','audio/wav','audio/ogg',
+  'image/png','image/jpeg','image/webp','image/gif'] where id = 'media';
+
+-- Portefeuille de ballons (100 au départ)
+create table if not exists public.wallets (
+  user_id uuid primary key references auth.users (id) on delete cascade,
+  balance int not null default 100 check (balance >= 0)
+);
+alter table public.wallets enable row level security;
+drop policy if exists "wallet: lecture" on public.wallets;
+create policy "wallet: lecture" on public.wallets for select to authenticated using (user_id = auth.uid());
+
+-- Paris : on mise autant de ballons qu'on veut sur 1 / N / 2 (un pari par match)
+create table if not exists public.wagers (
+  id bigint generated always as identity primary key,
+  user_id uuid not null references auth.users (id) on delete cascade,
+  match_id bigint not null references public.matches (id) on delete cascade,
+  pick smallint not null check (pick between 0 and 2),
+  amount int not null check (amount > 0),
+  settled boolean not null default false,
+  payout int not null default 0,
+  unique (user_id, match_id)
+);
+alter table public.wagers enable row level security;
+drop policy if exists "wagers: lecture" on public.wagers;
+create policy "wagers: lecture" on public.wagers for select to authenticated using (user_id = auth.uid());
+
+create or replace function public.my_wallet() returns int
+language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then return null; end if;
+  insert into public.wallets (user_id) values (auth.uid()) on conflict do nothing;
+  return (select balance from public.wallets where user_id = auth.uid());
+end $$;
+
+create or replace function public.place_bet(mid bigint, pk smallint, amt int) returns int
+language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then raise exception 'login'; end if;
+  if amt <= 0 then raise exception 'amount'; end if;
+  if not exists (select 1 from public.matches where id = mid and status = 'soon') then raise exception 'closed'; end if;
+  insert into public.wallets (user_id) values (auth.uid()) on conflict do nothing;
+  update public.wallets set balance = balance - amt where user_id = auth.uid() and balance >= amt;
+  if not found then raise exception 'balance'; end if;
+  insert into public.wagers (user_id, match_id, pick, amount) values (auth.uid(), mid, pk, amt);
+  return (select balance from public.wallets where user_id = auth.uid());
+end $$;
+
+-- Fin de match : distribue les ballons (pronos : 30 score exact / 10 bon résultat ;
+-- paris : les gagnants se partagent la cagnotte au prorata de leur mise, remboursement si personne n'a gagné)
+create or replace function public.settle_match(mid bigint) returns void
+language plpgsql security definer set search_path = public as $$
+declare m public.matches; r smallint; tot bigint; win bigint;
+begin
+  if not exists (select 1 from public.admins where user_id = auth.uid()) then raise exception 'not authorized'; end if;
+  select * into m from public.matches where id = mid;
+  if m.status <> 'done' or m.sh is null then raise exception 'match not finished'; end if;
+  r := case when m.sh > m.sa then 0 when m.sh = m.sa then 1 else 2 end;
+
+  insert into public.wallets (user_id) select distinct user_id from public.predictions where match_id = mid and not paid on conflict do nothing;
+  update public.wallets w set balance = w.balance + x.g from (
+    select user_id, case when h = m.sh and a = m.sa then 30
+                         when (h > a and m.sh > m.sa) or (h = a and m.sh = m.sa) or (h < a and m.sh < m.sa) then 10 else 0 end g
+    from public.predictions where match_id = mid and not paid) x where w.user_id = x.user_id;
+  update public.predictions set paid = true where match_id = mid and not paid;
+
+  select coalesce(sum(amount), 0), coalesce(sum(amount) filter (where pick = r), 0) into tot, win
+    from public.wagers where match_id = mid and not settled;
+  update public.wagers set payout = case when win = 0 then amount when pick = r then floor(amount::numeric * tot / win)::int else 0 end
+    where match_id = mid and not settled;
+  update public.wallets w set balance = w.balance + x.p from (
+    select user_id, sum(payout) p from public.wagers where match_id = mid and not settled group by user_id) x where w.user_id = x.user_id;
+  update public.wagers set settled = true where match_id = mid and not settled;
+end $$;
+grant execute on function public.my_wallet() to authenticated;
+grant execute on function public.place_bet(bigint, smallint, int) to authenticated;
+grant execute on function public.settle_match(bigint) to authenticated;
