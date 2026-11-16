@@ -200,8 +200,12 @@ table.cl{width:100%;border-collapse:collapse}table.cl td,table.cl th{padding:8px
 .adl{position:absolute;inset:0;display:none;background:#000;z-index:5}.adl.on{display:block}.adl video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.adl video.act{z-index:1}
 .adt{z-index:3;position:absolute;left:0;right:0;bottom:8cqw;text-align:center;color:#fff;font:700 5cqw 'Barlow Condensed',Impact,sans-serif;text-transform:uppercase;letter-spacing:.06em;text-shadow:0 .3cqw 1cqw #000;padding:0 4cqw}
 .adl iframe{position:absolute;left:0;top:0;width:1280px;height:720px;border:0;background:#fff;transform-origin:0 0;pointer-events:none;display:none}.adl.pg{overflow:hidden}.adl.pg iframe{display:block}.adl.pg video{display:none}
-.adh{position:absolute;left:2cqw;top:2cqw;z-index:2;display:none;flex-direction:column;align-items:flex-start;padding:1.2cqw 2cqw;border-radius:1cqw;background:#0000005c;color:#fff;font:700 2.8cqw 'Barlow Condensed',Impact,sans-serif;text-transform:uppercase;text-shadow:0 .2cqw .8cqw #000}.adh.on{display:flex}.adh small{font:600 1.8cqw Barlow,sans-serif;letter-spacing:.2em;margin-top:.4cqw}.adh b{font-size:7cqw;line-height:1;font-variant-numeric:tabular-nums}
+.adh{position:absolute;left:0;right:0;top:0;z-index:4;display:none;flex-direction:row;align-items:baseline;justify-content:center;gap:1.4cqw;padding:.5cqw 2cqw;background:transparent;pointer-events:none;color:#fff;font:700 2.4cqw 'Barlow Condensed',Impact,sans-serif;text-transform:uppercase;text-shadow:0 0 .5cqw #000,0 .1cqw .6cqw #000,0 0 1.4cqw #000}.adh.on{display:flex}.adh small{font:600 1.5cqw Barlow,sans-serif;letter-spacing:.2em;margin:0}.adh b{font-size:3.4cqw;line-height:1;font-variant-numeric:tabular-nums}
 .adl.nov{background:var(--p)}.adl.nov video{display:none}.adl.nov .adt{bottom:auto;top:50%;transform:translateY(-50%);font-size:6cqw}
+#tvw{max-width:960px;margin:0 auto}.tvh{display:flex;align-items:center;gap:10px;margin-bottom:8px}.tvh b{font:700 26px 'Barlow Condensed',sans-serif;letter-spacing:.08em}
+.tvbox{position:relative;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}.tvbox video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.tvo{position:absolute;left:10px;top:10px;z-index:2;padding:4px 10px;border-radius:6px;background:#000a;color:#fff;font:700 15px 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase;display:none}.tvo.on{display:block}.tvo.ad{background:#e90052}
+.tvx{position:absolute;inset:0;z-index:3;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;background:#150a1c;color:#fff;font:700 clamp(18px,4vw,30px) 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}.tvx.on{display:flex}
 </style>
 </head>
 <body>
@@ -209,7 +213,7 @@ table.cl{width:100%;border-collapse:collapse}table.cl td,table.cl th{padding:8px
 <div id="gload"><div class="spin"></div><p class="lbl">Chargement…</p></div>
 <div id="gform" hidden><p class="lbl">Connecte-toi ou crée ton compte pour entrer.</p><div class="col"><input type="text" id="le" placeholder="Pseudo" maxlength="20" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"><input type="password" id="lp" placeholder="Mot de passe" autocomplete="current-password"><button class="b pk" data-a="login">Se connecter</button><button class="b" data-a="signup">Créer un compte</button></div><p id="lerr" class="lbl err"></p><p class="lbl err" id="gcfg" hidden>Le site n’est pas encore relié à Supabase : remplis url et anonKey dans public/config.js, puis redéploie.</p><button class="b" data-a="demo" id="gdemo" hidden>Voir en mode démo</button><p class="lbl">Pseudo : 3 à 20 caractères (lettres, chiffres, _). Mot de passe : 6 caractères minimum.</p></div></div></div>
 <header class="top"><img class="blogo" src="logo.png" alt=""><b id="bal" hidden></b><span class="brand">DÉTOUR FOOT</span>
-<nav id="nav"><button data-v="admin" class="on">Admin</button><button data-v="matchs">Matchs</button><button data-v="player">Joueur</button><button data-v="overlay">Overlay</button></nav>
+<nav id="nav"><button data-v="admin" class="on">Admin</button><button data-v="matchs">Matchs</button><button data-v="player">Joueur</button><button data-v="tv">📺 TV</button><button data-v="overlay">Overlay</button></nav>
 <select id="sty" aria-label="Style"><option value="pl">Premier League</option><option value="l1">Ligue 1</option><option value="lg">Liga</option></select><button class="b" id="acc" data-a="acc" hidden>Connexion</button></header>
 <main>
 <section id="v-admin"><div class="mini" id="mini"></div><div class="adm" id="adm">
@@ -230,6 +234,13 @@ table.cl{width:100%;border-collapse:collapse}table.cl td,table.cl th{padding:8px
 <div class="r" id="adir"><label class="b">🎬 Intro de match<input type="file" id="adi" accept="video/*" hidden></label><button class="b" data-x="adix">Retirer l’intro</button></div><p class="lbl" id="adiq"></p>
 <div class="r"><button class="b pk" data-x="adon">Diffuser</button><button class="b" data-x="adoff">Arrêter</button></div>
 <p class="lbl" id="adq">Pages web, comme dans « Enregistrer sous » : HTML uniquement (.html), un seul fichier (.mht), ou page complète (choisis le dossier qui contient le .html et son dossier _files). Les pages et les vidéos peuvent se mélanger. Vidéos de la photothèque ou d’un dossier. Avant-match : la page démarre toute seule avec le compte à rebours, et se coupe quand il reste 10 s. Mi-temps / après-match : elle démarre à « Fin de mi-temps » ou bouton Diffuser.</p></div>
+<div class="panel"><h4>TV Détour (pour les joueurs)</h4>
+<div class="r"><label class="b">🔁 Vidéos en boucle (1 à 10)<input type="file" id="tvlf" accept="video/*" multiple hidden></label><button class="b" data-x="tvlc">Vider</button></div><ul class="l" id="tvll"></ul>
+<div class="r"><label class="b">📺 Émission principale<input type="file" id="tvmf" accept="video/*" hidden></label><button class="b" data-x="tvmx">Retirer</button></div><p class="lbl" id="tvmn"></p>
+<div class="r"><label class="b">🎬 Pubs de la TV (1 à 10)<input type="file" id="tvaf" accept="video/*" multiple hidden></label><button class="b" data-x="tvac">Vider</button></div><ul class="l" id="tval"></ul>
+<div class="r"><span class="lbl">Une coupure pub toutes les</span><select id="tvev"><option value="1">1 min</option><option value="2">2 min</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30">30 min</option></select></div>
+<div class="r"><button class="b pk" data-x="tvon">▶ Lancer l’émission</button><button class="b" data-x="tvloop">Boucle seule</button><button class="b rd" data-x="tvoff">Éteindre la TV</button></div>
+<p class="lbl" id="tvq">Les vidéos passent en boucle quand il n’y a pas d’émission. « Lancer l’émission » démarre l’émission principale depuis le début, avec toutes les pubs à la suite à chaque coupure. À la fin de l’émission, la boucle reprend. Tout le monde voit la même chose au même moment (50 Mo max par vidéo).</p></div>
 <div class="panel"><h4>Match</h4><div class="r"><select id="th"></select><span>vs</span><select id="ta"></select></div><div class="r"><button class="b pk" data-a="run" id="run">Coup d’envoi</button></div><h5>Temps du match</h5><div class="r"><span class="lbl">Mi-temps réelle</span><button class="b" data-x="dur" data-v="3">3 min</button><button class="b" data-x="dur" data-v="5">5 min</button></div><div class="r"><span class="lbl">Additionnel</span><button class="b" data-x="add" data-v="0">+0</button><button class="b" data-x="add" data-v="1">+1</button><button class="b" data-x="add" data-v="2">+2</button><button class="b" data-x="add" data-v="3">+3</button><button class="b" data-x="add" data-v="4">+4</button><button class="b" data-x="add" data-v="5">+5</button></div><div class="r"><button class="b" data-x="endh">Fin de mi-temps</button><button class="b pk" data-x="h2">2e mi-temps</button></div><p class="lbl" id="tinfo"></p>
 <h5>Compétition</h5><div class="r"><input type="text" id="cn" value="COUPE DU SERVEUR" maxlength="26"><select id="cl"><option value="img">Logo Détour Foot</option><option>⚽</option><option>🏆</option><option>🦁</option><option>⭐</option></select></div></div>
 <div class="panel"><h4>Buts et cartons</h4><div class="r"><input type="text" id="who" placeholder="Nom du joueur" value="MARTIN"></div><div class="r"><button class="b pk" data-a="gh">But domicile</button><button class="b pk" data-a="ga">But extérieur</button></div><div class="r"><button class="b y" data-a="yc">Carton jaune</button><button class="b rd" data-a="rc">Carton rouge</button><label class="lbl"><input type="checkbox" id="nm" checked> afficher le nom</label></div><div class="r"><button class="b" data-x="sbt">Masquer le score</button></div></div>
@@ -250,6 +261,7 @@ table.cl{width:100%;border-collapse:collapse}table.cl td,table.cl th{padding:8px
 <div class="box" id="pb"><div class="fs"></div></div><p id="enc"></p></div>
 <div class="panel"><h4>Chat</h4><div id="chat"></div><div class="r"><input type="text" id="cm" placeholder="Écrire un message…" maxlength="120"><button class="b pk" data-a="send">Envoyer</button></div></div>
 </div></section>
+<section id="v-tv" hidden><div id="tvw"><div class="tvh"><b>📺 TV DÉTOUR</b><button class="b" data-x="tvfs" style="margin-left:auto">⛶ Plein écran</button></div><div class="tvbox" id="tvbox"><video id="tvv" playsinline autoplay muted></video><div class="tvo" id="tvo"></div><div class="tvx" id="tvx">TV éteinte<br>reviens plus tard</div></div><p class="lbl" id="tvm"></p></div></section>
 <section id="v-overlay" hidden><div class="stage" id="s3"></div><p class="lbl">Overlay vidéo : mêmes graphiques que le programme, sans les commandes. Les trois vues partagent l’état de cette page.</p></section>
 </main>
 <div id="intro" hidden></div>
@@ -262,7 +274,7 @@ var $=function(s){return document.querySelector(s)};
 var T=[['LYON','LYO','#1b3f9a'],['PARIS','PAR','#2f6bff'],['LONDRES','LON','#d6322e'],['MANCHESTER','MAN','#6cabdd'],['MADRID','MAD','#c8a54b'],['BARCELONE','BAR','#a50044']];
 var CL={};T.forEach(function(t){CL[t[0]]=t[2]});
 var PH=[['Temps fort','Grosse occasion !'],['Temps fort','Quel arrêt !'],['Temps fort','Tir sur le poteau'],['Temps fort','Belle action collective']];
-var S={h:0,a:1,sc:[0,0],sec:0,run:0,sty:'pl',comp:'COUPE DU SERVEUR',logo:'img',fs:'',lt:null,mus:0,mute:0,cd:null,mv:null,vol:60,pt:'bracket',teams:null,half:1,dur:5,add:0,lbl:'',nsb:0,bg:null,ad:null,pm:{pre:{v:[],t:'',snd:0,loop:0,fit:0},ht:{v:[],t:'',snd:0,loop:0,fit:0},post:{v:[],t:'',snd:0,loop:0,fit:0}},rp:null,tk:null,lu:[[],[]],stats:[['Possession %',50,50],['Tirs',0,0],['Cadrés',0,0],['Corners',0,0],['Fautes',0,0]]},ST=[],idc=0;
+var S={h:0,a:1,sc:[0,0],sec:0,run:0,sty:'pl',comp:'COUPE DU SERVEUR',logo:'img',fs:'',lt:null,mus:0,mute:0,cd:null,mv:null,vol:60,pt:'bracket',teams:null,half:1,dur:5,add:0,lbl:'',nsb:0,bg:null,ad:null,tv:null,pm:{pre:{v:[],t:'',snd:0,loop:0,fit:0},ht:{v:[],t:'',snd:0,loop:0,fit:0},post:{v:[],t:'',snd:0,loop:0,fit:0}},rp:null,tk:null,lu:[[],[]],stats:[['Possession %',50,50],['Tirs',0,0],['Cadrés',0,0],['Corners',0,0],['Fautes',0,0]]},ST=[],idc=0;
 var rec={st:0,t:0,n:0,list:[]},chat=[['Léa','Allez Lyon !'],['Tom','On est chaud ce soir']],bets=[];
 function mm(s){s=Math.floor(s);return ('0'+Math.floor(s/60)).slice(-2)+':'+('0'+s%60).slice(-2)}
 function mt(a,sa,b,sb,live,w){return '<div class="m it" style="--i:'+w+'">'+(live?'<i>EN DIRECT</i>':'')+'<div class="t'+(sa>sb?' w':'')+'"><span>'+a+'</span><span>'+sa+'</span></div><div class="t'+(sb>sa?' w':'')+'"><span>'+b+'</span><span>'+sb+'</span></div></div>'}
@@ -321,7 +333,7 @@ function mk(el,pub){
   var ava=q('adl').querySelector('.va'),avb=q('adl').querySelector('.vb');[ava,avb].forEach(function(e){e.onended=e.onerror=function(){if(o.pub&&el.offsetParent&&(e===(o.vact||ava)||e===o.vpend))adEnd()}});ST.push(o);return o}
 mk($('#s1'));mk($('#s2'),1);mk($('#s3'),1);mk($('#s4'),1);
 var cdEnd=0,cdId=0,kick=0,AC=null,sy=null,aud=new Audio(),unlocked=!(window.APP_CONFIG&&window.APP_CONFIG.url),cur='';aud.loop=true;
-function all(){ST.forEach(function(s){s.paint()});pb();adm();music();$('#mn').textContent=S.mv?S.mv.name:'Ambiance (synthé)'}
+function all(){ST.forEach(function(s){s.paint()});pb();adm();music();tvTick();$('#mn').textContent=S.mv?S.mv.name:'Ambiance (synthé)'}
 function sndUI(){$('#snd').hidden=(!!sb&&isAdmin)||unlocked||document.body.classList.contains('ov')}
 function synthOn(){if(sy)return;AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume();var g=AC.createGain();g.connect(AC.destination);var n=0,ch=[[0,4,7],[5,9,12],[7,11,14],[3,7,10]];
   function note(f,t,d,ty,v){var o=AC.createOscillator(),e=AC.createGain();o.type=ty;o.frequency.value=f;e.gain.setValueAtTime(v,t);e.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(e);e.connect(g);o.start(t);o.stop(t+d)}
@@ -329,17 +341,17 @@ function synthOn(){if(sy)return;AC=AC||new (window.AudioContext||window.webkitAu
     note(220*Math.pow(2,c[n%3]/12),t,.4,'sawtooth',.1);if(n%8===0)note(110*Math.pow(2,c[0]/12),t,1.8,'triangle',.25);n++},250)}}
 function synthOff(){if(sy){clearInterval(sy.id);sy.g.disconnect();sy=null}}
 function music(){sndUI();if(sb&&isAdmin){synthOff();aud.pause();return}var v=(S.vol||0)/100;
-  if(!(S.mus&&!S.mute&&unlocked&&!AD.snd)){synthOff();aud.pause();return}
+  if(!(S.mus&&!S.mute&&unlocked&&!AD.snd&&!(view==='tv'&&S.tv&&S.tv.on))){synthOff();aud.pause();return}
   if(S.mv&&S.mv.url){synthOff();if(cur!==S.mv.url){cur=S.mv.url;aud.src=cur}aud.volume=v;var pr=aud.play();if(pr&&pr.catch)pr.catch(function(){})}
   else{aud.pause();synthOn();sy.g.gain.value=v}}
-var user=null,ready=false,demo=false,mr=null,chunks=[],stream=null,view='admin',pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx','teams','lm','half','dur','add','lbl','rp','nsb','bg','tk','stats','lu','pm','ad'];
+var user=null,ready=false,demo=false,mr=null,chunks=[],stream=null,view='admin',pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx','teams','lm','half','dur','add','lbl','rp','nsb','bg','tk','stats','lu','pm','ad','tv'];
 var lead=false;
 function pushIf(){if(lead)push()}
 function push(){if(!sb||!isAdmin)return;var d={};if(S.cd&&cdEnd)S.cd.rem=Math.max(0,cdEnd-Date.now());PUB.forEach(function(k){d[k]=S[k]});d.src=CID;lead=true;sb.from('match_state').update({data:d,updated_at:new Date().toISOString()}).eq('id',1).then(function(r){if(r.error)console.error(r.error)})}
 function commit(){all();push()}
 function applyFx(f){if(!f||f.id===lastFx)return;lastFx=f.id;var t=T[f.side?S.a:S.h];if(f.k==='g'){S.mute=1;music();setTimeout(function(){S.mute=0;music();adm()},4000);ST.forEach(function(s){s.goal(f.side,t,f.name,f.min)});sys('⚽ BUT de '+t[0]+' ! '+f.name+' '+f.min+'’')}else{ST.forEach(function(s){s.card(f.k,f.name,T[S.h],f.min)})}}
 function logoHtml(){var l=S.logo;if(l==='img')return '<img src="logo.png" alt="">';if(/^(https:\/\/|data:image\/)/.test(l))return '<img src="'+l+'" alt="">';return l}
-function recv(d,first){var pl=S.lm;PUB.forEach(function(k){if(d[k]!==undefined)S[k]=d[k]});if(S.teams&&S.teams.length>1)T=S.teams;if(S.h>=T.length)S.h=0;if(S.a>=T.length)S.a=Math.min(1,T.length-1);if(first)lastFx=d.fx?d.fx.id:0;if(first){stIn();adUI()}if(S.cd){if(S.cd.id!==cdId){cdId=S.cd.id;cdEnd=Date.now()+S.cd.rem}}else{cdEnd=0;cdId=0}if(!first&&pl!==S.lm&&sb)loadMatches();all();applyFx(S.fx)}
+function recv(d,first){var pl=S.lm;PUB.forEach(function(k){if(d[k]!==undefined)S[k]=d[k]});if(S.teams&&S.teams.length>1)T=S.teams;if(S.h>=T.length)S.h=0;if(S.a>=T.length)S.a=Math.min(1,T.length-1);if(first)lastFx=d.fx?d.fx.id:0;if(first){stIn();adUI();tvUI()}if(S.cd){if(S.cd.id!==cdId){cdId=S.cd.id;cdEnd=Date.now()+S.cd.rem}}else{cdEnd=0;cdId=0}if(!first&&pl!==S.lm&&sb)loadMatches();all();applyFx(S.fx)}
 function loadState(){if(!sb)return;sb.from('match_state').select('data').eq('id',1).single().then(function(r){if(r.data&&r.data.data&&r.data.data.h!==undefined){recv(r.data.data,true);fillTeams();$('#cl').value=S.logo}})}
 function ui(){balUI();var a=$('#acc'),ov=pin==='overlay',np=!!sb&&!isAdmin;$('#gate').hidden=ov||demo||(!!sb&&ready&&!!user);$('#gload').hidden=ready;$('#gform').hidden=!ready;$('#gcfg').hidden=!!sb;$('#gdemo').hidden=!!sb;
   $('#adm').hidden=np;a.hidden=!sb||ov||!user;a.textContent=user?NAME+' · Déconnexion':'';
@@ -421,7 +433,7 @@ PH.forEach(function(p,i){var b=document.createElement('button');b.className='b';
 T.slice(0,3).forEach(function(){});
 [['Gagne','#'],['Nul','#'],['Perd','#']].forEach(function(x,i){var b=document.createElement('button');b.className='b';b.dataset.b=i;b.textContent=['Domicile gagne','Match nul','Extérieur gagne'][i]+' · 10 pts';$('#bb').appendChild(b)});
 document.addEventListener('click',function(e){
-  var n=e.target.closest('#nav button');if(n){['admin','matchs','player','overlay'].forEach(function(v){$('#v-'+v).hidden=v!==n.dataset.v});[].forEach.call($('#nav').children,function(b){b.classList.toggle('on',b===n)});view=n.dataset.v;ui();all();return}
+  var n=e.target.closest('#nav button');if(n){['admin','matchs','player','tv','overlay'].forEach(function(v){$('#v-'+v).hidden=v!==n.dataset.v});[].forEach.call($('#nav').children,function(b){b.classList.toggle('on',b===n)});view=n.dataset.v;ui();all();return}
   var f=e.target.closest('[data-f]');if(f){S.fs=f.dataset.f;commit();return}
   var p=e.target.closest('#pt [data-p]');if(p){S.pt=p.dataset.p;[].forEach.call($('#pt').children,function(b){b.classList.toggle('pk',b===p)});pb();return}
   var bt=e.target.closest('[data-b]');if(bt){var i=+bt.dataset.b;if(sb)sb.from('bets').insert({pick:i});bets.push([T[S.h][1]+' gagne',T[S.a][1]+' gagne'][i===0?0:1]);bets[bets.length-1]=['Domicile ('+T[S.h][1]+') gagne','Match nul','Extérieur ('+T[S.a][1]+') gagne'][i]+' · 10 pts';$('#bets').innerHTML=bets.map(function(x){return '<li>'+x+'</li>'}).join('');return}
@@ -436,7 +448,7 @@ document.addEventListener('click',function(e){
   else if(a==='cds'){var ms=Math.min(90,Math.max(1,parseInt($('#cdm').value)||10))*60000;S.cd={id:Date.now(),rem:ms,tot:ms};cdId=S.cd.id;cdEnd=Date.now()+ms;kick=0;S.fs='';S.run=0;S.sec=0;S.mus=1;S.ad=hasAd('pre')?(S.ad&&S.ad.ph==='pre'?S.ad:{ph:'pre',id:Date.now()}):null}
   else if(a==='cdx'){S.cd=null;cdEnd=0;S.mus=0;S.ad=null}
   else if(a==='msyn')S.mv=null;
-  else if(a==='snd'){unlocked=true;var cv=$('#castv');if(cv)cv.muted=false;music();return}
+  else if(a==='snd'){unlocked=true;var cv=$('#castv');if(cv)cv.muted=false;music();tvTick();return}
   else if(a==='mus')S.mus=S.mus?0:1;
   else if(a==='recs'){if(!rec.st)recStart();return}
   else if(a==='recp'){if(mr&&rec.st){if(rec.st===1){mr.pause();rec.st=2}else{mr.resume();rec.st=1}adm()}return}
@@ -543,6 +555,12 @@ document.addEventListener('click',function(e){var x=e.target.closest('[data-x]')
   else if(k==='mlu')mLu(id);else if(k==='mlusave')mLuSave();else if(k==='mluclose')$('#lue').hidden=true;
   else if(k==='aph'){APH=x.dataset.p;adUI()}else if(k==='adrm'){pmGet(APH).v.splice(+x.dataset.i,1);adUI();commit()}else if(k==='adclr'){pmGet(APH).v=[];adUI();commit()}
   else if(k==='adon'){S.ad={ph:APH,id:Date.now()};commit()}else if(k==='adoff'){S.ad=null;commit()}
+  else if(k==='tvon'){var tv1=tvGet();if(!tv1.main||!tv1.main.d){$('#tvq').textContent='Choisis d’abord une émission principale.'}else{tv1.on=1;tv1.mode='main';tv1.t0=Date.now();commit()}}
+  else if(k==='tvloop'){var tv2=tvGet();tv2.on=1;tv2.mode='loop';tv2.t0=Date.now();commit()}
+  else if(k==='tvoff'){tvGet().on=0;commit()}
+  else if(k==='tvlc'){tvDel(tvGet().loop);tvGet().loop=[];tvUI();commit()}else if(k==='tvac'){tvDel(tvGet().ads);tvGet().ads=[];tvUI();commit()}else if(k==='tvmx'){tvDel([tvGet().main]);tvGet().main=null;tvUI();commit()}
+  else if(k==='tvrm'){tvDel(tvGet()[x.dataset.l].splice(+x.dataset.i,1));tvUI();commit()}
+  else if(k==='tvfs'){var tb=$('#tvbox'),tq=tb.requestFullscreen||tb.webkitRequestFullscreen,tvd=$('#tvv');try{if(tq)tq.call(tb);else if(tvd.webkitEnterFullscreen)tvd.webkitEnterFullscreen()}catch(_){}}
   else if(k==='ssave')sSave(0);else if(k==='spub')sSave(1)});
 /* ===== Ballons, bandeau défilant, compos, ralenti ===== */
 var BAL=null,WG={},BP={},LU=null,SEG={on:0,last:null};
@@ -603,6 +621,49 @@ $('#adf').onchange=function(){var fs=[].slice.call(this.files),P=pmGet(APH),q=$(
     sb.storage.from('media').upload(p,f,{upsert:true,contentType:f.type||'video/mp4'}).then(function(r){if(r.error){q.textContent=/mime|type/i.test(r.error.message||'')?'Format refusé : lance migration-ballons.sql.':cerr(r.error);return}
       P.v.push({u:sb.storage.from('media').getPublicUrl(p).data.publicUrl,n:f.name});adUI();nx()})})()};
 
+/* ===== TV Détour : boucle + émission principale + coupures pub ===== */
+var tvCur='';
+function tvGet(){return S.tv=S.tv||{on:0,mode:'loop',loop:[],main:null,ads:[],ev:10,t0:0}}
+function tvSum(a){return (a||[]).reduce(function(n,x){return n+(x.d||0)},0)}
+function tvWalk(a,e,k){for(var i=0;i<a.length;i++){var d=a[i].d||0;if(e<d)return {u:a[i].u,t:e,k:k,left:d-e};e-=d}return null}
+function tvSeg(tv,el){if(!tv||el<0)return null;var lp=(tv.loop||[]).filter(function(x){return x.d>0}),ad=(tv.ads||[]).filter(function(x){return x.d>0}),m=tv.main,ev=Math.max(1,tv.ev||10)*60,e=el;
+  if(tv.mode==='main'&&m&&m.d>0){var A=tvSum(ad),pos=0;
+    while(pos<m.d){var ch=Math.min(ev,m.d-pos);
+      if(e<ch)return {u:m.u,t:pos+e,k:'main',left:ch-e,brk:(pos+ch<m.d&&A>0)};
+      e-=ch;pos+=ch;
+      if(pos>=m.d)break;
+      if(A>0){if(e<A)return tvWalk(ad,e,'ad');e-=A}}}
+  var D=tvSum(lp);if(!lp.length||!D)return null;return tvWalk(lp,e%D,'loop')}
+function tvDel(a){if(!sb||!isAdmin)return;var ps=(a||[]).map(function(x){return x&&x.p}).filter(Boolean);if(ps.length)sb.storage.from('media').remove(ps).then(function(r){if(r.error)console.error(r.error)})}
+function tvMo(t){var n=tvSum0(t.loop)+tvSum0(t.ads)+(t.main?t.main.s||0:0);return (n/1048576).toFixed(0)}
+function tvSum0(a){return (a||[]).reduce(function(n,x){return n+(x.s||0)},0)}
+function tvUI(){var t=S.tv||{loop:[],ads:[],main:null,ev:10},li=function(a,l){return a.map(function(x,i){return '<li>'+esc(x.n)+' ('+mm(x.d)+') <button class="b" data-x="tvrm" data-l="'+l+'" data-i="'+i+'">✕</button></li>'}).join('')};
+  if(!$('#tvll'))return;$('#tvll').innerHTML=li(t.loop||[],'loop');$('#tval').innerHTML=li(t.ads||[],'ads');$('#tvmn').textContent=(t.main?'Émission : '+t.main.n+' ('+mm(t.main.d)+')':'Pas d’émission principale.')+' · Stockage TV : '+tvMo(t)+' Mo (Supabase gratuit : 1 Go en tout)';$('#tvev').value=String(t.ev||10)}
+function tvTick(){var v=$('#tvv');if(!v)return;
+  if($('#v-tv').hidden){if(tvCur){v.pause();v.removeAttribute('src');v.load();tvCur=''}return}
+  var tv=S.tv,o=$('#tvo'),x=$('#tvx'),m=$('#tvm'),g=(tv&&tv.on)?tvSeg(tv,(Date.now()-tv.t0)/1000):null;
+  v.muted=!unlocked||(!!sb&&isAdmin);
+  if(!g){x.classList.toggle('on',true);x.innerHTML=(tv&&tv.on)?'Programme en préparation…':'TV éteinte<br>reviens plus tard';o.classList.remove('on');m.textContent='';if(tvCur){v.pause();v.removeAttribute('src');v.load()}tvCur='';return}
+  x.classList.remove('on');
+  if(tvCur!==g.u){tvCur=g.u;v.onloadedmetadata=function(){var g2=(S.tv&&S.tv.on)?tvSeg(S.tv,(Date.now()-S.tv.t0)/1000):null;if(g2&&g2.u===tvCur){try{v.currentTime=g2.t}catch(_){}}v.play().catch(function(){})};v.src=g.u;v.load()}
+  else{if(Math.abs(v.currentTime-g.t)>2.5){try{v.currentTime=g.t}catch(_){}}if(v.paused||v.ended)v.play().catch(function(){})}
+  o.className='tvo on'+(g.k==='ad'?' ad':'');
+  o.textContent=g.k==='ad'?'📢 Pub · reprise dans '+mm(Math.ceil(g.left)):g.k==='main'?'● Émission en direct':'🔁 TV Détour';
+  m.textContent=g.k==='main'&&g.brk?'Prochaine coupure pub dans '+mm(Math.ceil(g.left)):''}
+function tvDur(f){return new Promise(function(r){var v=document.createElement('video'),u=URL.createObjectURL(f);v.preload='metadata';v.onloadedmetadata=function(){URL.revokeObjectURL(u);r(isFinite(v.duration)?v.duration:0)};v.onerror=function(){URL.revokeObjectURL(u);r(0)};v.src=u})}
+function tvUp(f){return tvDur(f).then(function(d){if(!d)throw {message:f.name+' : durée illisible, ignorée.'};
+  if(!sb)return {u:URL.createObjectURL(f),n:f.name,d:d,s:f.size};
+  var p='ads/tv-'+Date.now()+'-'+f.name.replace(/[^\w.-]/g,'_');
+  return sb.storage.from('media').upload(p,f,{upsert:true,contentType:f.type||'video/mp4'}).then(function(r){if(r.error)throw r.error;return {u:sb.storage.from('media').getPublicUrl(p).data.publicUrl,n:f.name,d:d,s:f.size,p:p}})})}
+function tvAdd(inp,key){var fs=[].slice.call(inp.files),t=tvGet(),q=$('#tvq'),i=0;inp.value='';fs=key==='main'?fs.slice(0,1):fs.slice(0,10-t[key].length);
+  if(!fs.length){q.textContent='10 vidéos maximum.';return}
+  (function nx(){if(i>=fs.length){tvUI();commit();q.textContent='Vidéos prêtes ✓';return}var f=fs[i++];
+    if(f.size>52428800){q.textContent=f.name+' : trop lourde (50 Mo max), ignorée.';return nx()}
+    q.textContent='Envoi '+i+'/'+fs.length+' : '+f.name+'…';
+    tvUp(f).then(function(it){if(key==='main'){tvDel([t.main]);t.main=it}else t[key].push(it);nx()},function(e){q.textContent=/mime|type/i.test((e&&e.message)||'')?'Format refusé : lance migration-ballons.sql.':cerr(e);nx()})})()}
+$('#tvlf').onchange=function(){tvAdd(this,'loop')};$('#tvaf').onchange=function(){tvAdd(this,'ads')};$('#tvmf').onchange=function(){tvAdd(this,'main')};
+$('#tvev').onchange=function(){tvGet().ev=+this.value;commit()};
+setInterval(tvTick,500);
 /* ===== Pubs « page web » : HTML uniquement / un seul fichier (.mht) / page complète (dossier) =====
    Tout est transformé en UN fichier .html autonome (images, CSS, scripts intégrés), envoyé dans le stockage,
    puis affiché dans un cadre isolé (sandbox) sur l'écran public. */
