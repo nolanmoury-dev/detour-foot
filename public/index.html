@@ -155,6 +155,31 @@ input[type=color]{width:46px;height:42px;padding:0;border:2px solid var(--line);
 .spin{width:44px;height:44px;margin:0 auto 10px;border:5px solid #ffffff30;border-top-color:#e90052;border-radius:50%;animation:rot .9s linear infinite}
 @keyframes rot{to{transform:rotate(360deg)}}
 body.ov{background:transparent}body.ov::before,body.ov .top,body.ov #v-overlay p{display:none}body.ov main{padding:0;max-width:none}body.ov .stage{border-radius:0;background:none}
+:root[data-theme="dark"]{--bg:#09090b;--card:#16161a;--line:#2b2b33;--ink:#f4f4f6;--mut:#9a9aa6}
+:root[data-theme="light"]{--bg:#fff;--card:#f3f3f6;--line:#dcdce3;--ink:#111;--mut:#666}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px}
+.chip{flex:none;border:2px solid var(--k);color:var(--ink);background:none;border-radius:99px;padding:6px 14px;font:700 15px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.chip.on{background:var(--k);color:#fff}
+.dayh{margin:16px 0 6px;font:700 15px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.mc{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--k);border-radius:14px;padding:12px;margin-bottom:8px}
+.mc.lv{cursor:pointer;box-shadow:0 0 0 2px #e90052}
+.mr{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
+.tm2{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font:700 15px 'Barlow Condensed',sans-serif;text-transform:uppercase}
+.bd{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+.sc2{display:flex;align-items:center;gap:6px;font:700 24px 'Barlow Condensed',sans-serif}
+.pi{width:46px;height:46px;text-align:center;font:700 20px 'Barlow Condensed',sans-serif;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.mf{margin-top:8px;text-align:center;font-size:13px;color:var(--mut)}
+table.cl{width:100%;border-collapse:collapse}table.cl td,table.cl th{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}table.cl td:first-child,table.cl th:first-child{text-align:left}
+.bk{display:flex;gap:10px;overflow-x:auto}.bk>div{flex:1;min-width:150px;display:flex;flex-direction:column;justify-content:space-around;gap:8px}
+.bk .m2{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-weight:600}.bk .m2 div{display:flex;justify-content:space-between}
+.fs .bk{flex:1;font-size:2cqw}.fs .bk .m2{background:var(--fr);border:0;color:#fff}.fs .dayh{color:#fff;opacity:.7}
+#intro{position:fixed;inset:0;z-index:30;background:var(--k);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;animation:iw .9s cubic-bezier(.7,0,.3,1)}
+#intro h2{margin:0;font:700 40px 'Barlow Condensed',Impact,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+#intro .ir{width:100%;max-width:420px;display:flex;justify-content:space-between;gap:10px;background:#00000030;border-radius:8px;padding:8px 12px;font-weight:600;opacity:0;animation:ii .5s forwards;animation-delay:calc(var(--i)*.15s + .9s)}
+#intro .tot{font-size:20px;background:#fff;color:#111}
+#intro button{margin-top:10px;color:#fff;border-color:#fff;background:none}
+@keyframes iw{from{clip-path:circle(0 at 50% 100%)}to{clip-path:circle(150% at 50% 100%)}}
+@keyframes ii{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -162,7 +187,7 @@ body.ov{background:transparent}body.ov::before,body.ov .top,body.ov #v-overlay p
 <div id="gload"><div class="spin"></div><p class="lbl">Chargement…</p></div>
 <div id="gform" hidden><p class="lbl">Connecte-toi ou crée ton compte pour entrer.</p><div class="col"><input type="text" id="le" placeholder="Pseudo" maxlength="20" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"><input type="password" id="lp" placeholder="Mot de passe" autocomplete="current-password"><button class="b pk" data-a="login">Se connecter</button><button class="b" data-a="signup">Créer un compte</button></div><p id="lerr" class="lbl err"></p><p class="lbl err" id="gcfg" hidden>Le site n’est pas encore relié à Supabase : remplis url et anonKey dans public/config.js, puis redéploie.</p><button class="b" data-a="demo" id="gdemo" hidden>Voir en mode démo</button><p class="lbl">Pseudo : 3 à 20 caractères (lettres, chiffres, _). Mot de passe : 6 caractères minimum.</p></div></div></div>
 <header class="top"><img class="blogo" src="logo.png" alt=""><span class="brand">DÉTOUR FOOT</span>
-<nav id="nav"><button data-v="admin" class="on">Admin</button><button data-v="player">Joueur</button><button data-v="overlay">Overlay</button></nav>
+<nav id="nav"><button data-v="admin" class="on">Admin</button><button data-v="matchs">Matchs</button><button data-v="player">Joueur</button><button data-v="overlay">Overlay</button></nav>
 <select id="sty" aria-label="Style"><option value="pl">Premier League</option><option value="l1">Ligue 1</option><option value="lg">Liga</option></select><button class="b" id="acc" data-a="acc" hidden>Connexion</button></header>
 <main>
 <section id="v-admin"><div class="mini" id="mini"></div><div class="adm" id="adm">
@@ -172,15 +197,19 @@ body.ov{background:transparent}body.ov::before,body.ov .top,body.ov #v-overlay p
 <div>
 <div class="panel"><h4>Avant-match</h4><div class="r"><button class="b" data-m="5">5 min</button><button class="b" data-m="10">10 min</button><button class="b" data-m="15">15 min</button><input type="text" id="cdm" inputmode="numeric" value="10" style="max-width:70px"><span class="lbl">min</span></div><div class="r"><button class="b pk" data-a="cds">Lancer le compte à rebours</button><button class="b" data-a="cdx">Arrêter</button></div><p class="lbl">Écran « Coup d’envoi dans… » en plein écran, avec la musique. À zéro : le match démarre et la musique s’arrête.</p></div>
 <div class="panel"><h4>Compétitions</h4><div class="r"><select id="cps" style="flex:1"></select><button class="b pk" data-a="cpuse">Utiliser</button></div><div class="r"><button class="b" data-a="cpedit">Modifier</button><button class="b" data-a="cpnew">Nouvelle</button><button class="b rd" data-a="cpdel">Supprimer</button></div>
-<div id="cped" hidden><h5>Compétition</h5><div class="r"><input type="text" id="cpn" placeholder="Nom de la compétition" maxlength="26"></div><div class="r"><label class="b">Choisir un logo<input type="file" id="cpl" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label><img id="cpli" class="cpli" alt="" hidden><button class="b" data-a="cplx">Sans logo</button></div><h5>Équipes (nom + couleur)</h5><div id="cpt"></div><div class="r"><button class="b" data-a="cpadd">+ Équipe</button></div><div class="r"><button class="b pk" data-a="cpsave">Enregistrer</button><button class="b" data-a="cpcancel">Annuler</button></div></div><p class="lbl" id="cpm">Crée une compétition, enregistre-la, puis clique sur « Utiliser » pour l’afficher.</p></div>
+<div id="cped" hidden><h5>Compétition</h5><div class="r"><input type="text" id="cpn" placeholder="Nom de la compétition" maxlength="26"></div><div class="r"><span class="lbl">Couleur</span><input type="color" id="cpc" value="#e90052"></div><div class="r"><label class="b">Choisir un logo<input type="file" id="cpl" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label><img id="cpli" class="cpli" alt="" hidden><button class="b" data-a="cplx">Sans logo</button></div><h5>Équipes (nom + couleur)</h5><div id="cpt"></div><div class="r"><button class="b" data-a="cpadd">+ Équipe</button></div><div class="r"><button class="b pk" data-a="cpsave">Enregistrer</button><button class="b" data-a="cpcancel">Annuler</button></div></div><p class="lbl" id="cpm">Crée une compétition, enregistre-la, puis clique sur « Utiliser » pour l’afficher.</p></div>
 <div class="panel"><h4>Match</h4><div class="r"><select id="th"></select><span>vs</span><select id="ta"></select></div><div class="r"><button class="b pk" data-a="run" id="run">Coup d’envoi</button></div>
 <h5>Compétition</h5><div class="r"><input type="text" id="cn" value="COUPE DU SERVEUR" maxlength="26"><select id="cl"><option value="img">Logo Détour Foot</option><option>⚽</option><option>🏆</option><option>🦁</option><option>⭐</option></select></div></div>
 <div class="panel"><h4>Buts et cartons</h4><div class="r"><input type="text" id="who" placeholder="Nom du joueur" value="MARTIN"></div><div class="r"><button class="b pk" data-a="gh">But domicile</button><button class="b pk" data-a="ga">But extérieur</button></div><div class="r"><button class="b y" data-a="yc">Carton jaune</button><button class="b rd" data-a="rc">Carton rouge</button><label class="lbl"><input type="checkbox" id="nm" checked> afficher le nom</label></div></div>
 <div class="panel"><h4>Phrase en bas d’écran</h4><div class="r" id="phr"></div><div class="r"><input type="text" id="phx" placeholder="Ta phrase…" maxlength="70"><button class="b pk" data-a="phs">Afficher</button><button class="b" data-a="phh">Masquer</button></div></div>
 <div class="panel"><h4>Musique</h4><div class="r"><button class="b" data-a="mus" id="mus">Arrêt</button><span class="eq" id="eq"><i></i><i></i><i></i><i></i></span><span class="lbl" id="mn">Ambiance (synthé)</span></div><div class="r"><label class="b">Choisir une vidéo<input type="file" id="mf" accept="video/*,audio/*" hidden></label><button class="b" data-a="msyn">Ambiance synthé</button></div><div class="r"><span class="lbl">Volume</span><input type="range" id="vol" min="0" max="100" value="60"></div><p class="lbl">Jouée sur l’overlay et chez les joueurs, pas sur ce téléphone. Coupée pendant un but.</p></div>
 </div></div></section>
-<section id="v-player" hidden><div class="ply">
-<div><div class="vid"><video id="castv" muted playsinline autoplay></video><div class="stage" id="s2"></div><span class="live">● EN DIRECT</span></div>
+<section id="v-matchs" hidden><div class="ply"><div>
+<div class="panel"><h4>Nouveau match</h4><div class="r"><select id="mc" style="flex:1"></select></div><div class="r"><select id="mh"></select><span>vs</span><select id="ma"></select></div><div class="r"><input type="datetime-local" id="md"><select id="mp"><option>Journée</option><option>Quarts</option><option>Demies</option><option>Finale</option></select></div><div class="r"><button class="b pk" data-x="mnew">Créer le match</button></div><p class="lbl" id="mm">Les championnats se créent dans l’onglet Admin &gt; Compétitions (nom, logo, couleur, équipes).</p></div>
+<div class="panel"><h4>Matchs du championnat</h4><div id="ml"></div><p class="lbl">« Direct » met le match à l’écran : les joueurs voient « EN DIRECT » et touchent le match pour le regarder. « Terminer » enregistre le score affiché.</p></div></div>
+<div><div class="panel"><h4>Classement</h4><div id="sl"></div><div class="r"><button class="b" data-x="ssave">Enregistrer</button><button class="b pk" data-x="spub">Publier maintenant</button></div><p class="lbl" id="sm">Publié automatiquement chaque lundi, ou en forçant ici. Les joueurs ne lisent que la version publiée. J et Pts sont calculés (3 / 1 / 0).</p></div></div></div></section>
+<section id="v-player" hidden><div id="mpp"><div class="r"><b style="font:700 26px 'Barlow Condensed',sans-serif;letter-spacing:.08em">PRONOS</b><button class="b" data-x="thm" style="margin-left:auto" aria-label="Thème">☾ / ☀</button><button class="b" data-x="rf" aria-label="Rafraîchir">↻</button></div><div class="chips" id="chips"></div><div class="tabs"><button class="b pk" data-x="tb" data-t="m">Matchs</button><button class="b" data-x="tb" data-t="c">Classement</button><button class="b" data-x="tb" data-t="a">Arbre</button></div><div id="mb"></div></div><div class="ply" id="lv" hidden>
+<div><button class="b" data-x="bk" style="margin-bottom:8px">← Matchs</button><div class="vid"><video id="castv" muted playsinline autoplay></video><div class="stage" id="s2"></div><span class="live">● EN DIRECT</span></div>
 <div class="panel" style="margin-top:12px"><h4>Parier</h4><div class="r" id="bb"></div><ul class="l" id="bets"></ul></div>
 <div class="tabs" id="pt"><button class="b pk" data-p="bracket">Arbre en direct</button><button class="b" data-p="rank">Classement</button></div>
 <div class="box" id="pb"><div class="fs"></div></div><p id="enc"></p></div>
@@ -188,6 +217,7 @@ body.ov{background:transparent}body.ov::before,body.ov .top,body.ov #v-overlay p
 </div></section>
 <section id="v-overlay" hidden><div class="stage" id="s3"></div><p class="lbl">Overlay vidéo : mêmes graphiques que le programme, sans les commandes. Les trois vues partagent l’état de cette page.</p></section>
 </main>
+<div id="intro" hidden></div>
 <button class="b pk" id="snd" data-a="snd" hidden style="position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:20">🔊 Activer le son</button>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -203,8 +233,8 @@ function mm(s){return ('0'+Math.floor(s/60)).slice(-2)+':'+('0'+s%60).slice(-2)}
 function mt(a,sa,b,sb,live,w){return '<div class="m it" style="--i:'+w+'">'+(live?'<i>EN DIRECT</i>':'')+'<div class="t'+(sa>sb?' w':'')+'"><span>'+a+'</span><span>'+sa+'</span></div><div class="t'+(sb>sa?' w':'')+'"><span>'+b+'</span><span>'+sb+'</span></div></div>'}
 function mtl(w){var m=mt(T[S.h][0],S.sc[0],T[S.a][0],S.sc[1],1,w);return m.replace('class="m it"','class="m it live"')}
 var FS={
-rank:function(){var d=[['LYON',31,14],['PARIS',28,11],['BARCELONE',26,9],['LONDRES',21,4],['MANCHESTER',19,2],['MADRID',16,-1]];return '<h3>Classement</h3><div class="rk hd"><span>#</span><span></span><span>Équipe</span><span>J</span><span>Diff</span><span style="text-align:right">Pts</span></div>'+d.map(function(r,i){return '<div class="rk it'+(i<2?' top':'')+'" style="--i:'+i+';--d:'+CL[r[0]]+'"><span>'+(i+1)+'</span><span class="dot"></span><span>'+r[0]+(i===1?'<em>▲</em>':'')+'</span><span>12</span><span>'+(r[2]>0?'+':'')+r[2]+'</span><span class="pts">'+r[1]+'</span></div>'}).join('')},
-bracket:function(){return '<h3>Arbre du tournoi</h3><div class="br"><div class="bc"><div class="bl">Quarts</div><div class="bm">'+mt('LYON',2,'MADRID',1,0,0)+mt('PARIS',1,'LILLE',0,0,1)+mt('BARCELONE',2,'LONDRES',0,0,2)+mt('MANCHESTER',3,'NICE',1,0,3)+'</div></div><div class="bc"><div class="bl">Demies</div><div class="bm">'+mtl(5)+mt('BARCELONE',2,'MANCHESTER',0,0,6)+'</div></div><div class="bc"><div class="bl">Finale</div><div class="bm">'+mt('?','-','BARCELONE','-',0,8)+'</div></div></div>'},
+rank:function(){var cc=curComp(),rr=cc?stRows(cc,cc.pub):[],d=rr.length?rr.map(function(r){return [r.t,r.p,r.df,r.j]}):[['LYON',31,14],['PARIS',28,11],['BARCELONE',26,9],['LONDRES',21,4],['MANCHESTER',19,2],['MADRID',16,-1]];return '<h3>Classement</h3><div class="rk hd"><span>#</span><span></span><span>Équipe</span><span>J</span><span>Diff</span><span style="text-align:right">Pts</span></div>'+d.map(function(r,i){return '<div class="rk it'+(i<2?' top':'')+'" style="--i:'+i+';--d:'+(CL[r[0]]||'#888')+'"><span>'+(i+1)+'</span><span class="dot"></span><span>'+r[0]+(i===1?'<em>▲</em>':'')+'</span><span>'+(r[3]||12)+'</span><span>'+(r[2]>0?'+':'')+r[2]+'</span><span class="pts">'+r[1]+'</span></div>'}).join('')},
+bracket:function(){var cc=curComp();if(brHas(cc))return '<h3>Arbre du tournoi</h3>'+brHtml(cc);return '<h3>Arbre du tournoi</h3><div class="br"><div class="bc"><div class="bl">Quarts</div><div class="bm">'+mt('LYON',2,'MADRID',1,0,0)+mt('PARIS',1,'LILLE',0,0,1)+mt('BARCELONE',2,'LONDRES',0,0,2)+mt('MANCHESTER',3,'NICE',1,0,3)+'</div></div><div class="bc"><div class="bl">Demies</div><div class="bm">'+mtl(5)+mt('BARCELONE',2,'MANCHESTER',0,0,6)+'</div></div><div class="bc"><div class="bl">Finale</div><div class="bm">'+mt('?','-','BARCELONE','-',0,8)+'</div></div></div>'},
 pitch:function(){var p=[['1','Moreau',50,90],['2','Petit',15,70],['4','Roche',38,72],['5','Blanc',62,72],['3','Faure',85,70],['6','Girard',25,48],['8','Lopez',50,50],['10','Martin',75,48],['7','Diallo',20,22],['9','Nkosi',50,18],['11','Silva',80,22]];return '<h3>'+T[S.h][0]+' · 4-3-3</h3><div class="fp">'+p.map(function(x,i){return '<div class="pj" style="--i:'+i+';left:'+x[2]+'%;top:'+x[3]+'%"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>'}).join('')+'</div>'},
 list:function(){var n=['Moreau','Petit','Roche','Blanc','Faure','Girard','Lopez','Martin'];function col(t,o){return '<div><h4 class="it" style="--i:'+o+'">'+t+'</h4>'+n.map(function(x,i){return '<div class="lr it" style="--i:'+(o+i+1)+'"><b>'+(i+1)+'</b><span>'+x+'</span></div>'}).join('')+'<div class="lr it" style="--i:'+(o+10)+'"><b>R</b><span>Dupont · Henry · Mercier</span></div></div>'}return '<h3>Compos</h3><div class="ls">'+col(T[S.h][0],0)+col(T[S.a][0],1)+'</div>'},
 stats:function(){var s=[['Possession',58,42],['Tirs',12,7],['Tirs cadrés',6,3],['Corners',5,2],['Fautes',9,12]];return '<h3>Stats du match</h3>'+s.map(function(x,i){return '<div class="sr it" style="--i:'+i+'"><div><span>'+x[1]+(i?'':'%')+'</span><span>'+x[0]+'</span><span>'+x[2]+(i?'':'%')+'</span></div><div class="bar"><i style="--i:'+i+';--w:'+(100*x[1]/(x[1]+x[2]))+'%"></i></div></div>'}).join('')}};
@@ -236,21 +266,21 @@ function music(){sndUI();if(sb&&isAdmin){synthOff();aud.pause();return}var v=(S.
   if(!(S.mus&&!S.mute&&unlocked)){synthOff();aud.pause();return}
   if(S.mv&&S.mv.url){synthOff();if(cur!==S.mv.url){cur=S.mv.url;aud.src=cur}aud.volume=v;var pr=aud.play();if(pr&&pr.catch)pr.catch(function(){})}
   else{aud.pause();synthOn();sy.g.gain.value=v}}
-var user=null,ready=false,demo=false,mr=null,chunks=[],stream=null,view='admin',pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx','teams'];
+var user=null,ready=false,demo=false,mr=null,chunks=[],stream=null,view='admin',pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx','teams','lm'];
 var lead=false;
 function pushIf(){if(lead)push()}
 function push(){if(!sb||!isAdmin)return;var d={};if(S.cd&&cdEnd)S.cd.rem=Math.max(0,cdEnd-Date.now());PUB.forEach(function(k){d[k]=S[k]});d.src=CID;lead=true;sb.from('match_state').update({data:d,updated_at:new Date().toISOString()}).eq('id',1).then(function(r){if(r.error)console.error(r.error)})}
 function commit(){all();push()}
 function applyFx(f){if(!f||f.id===lastFx)return;lastFx=f.id;var t=T[f.side?S.a:S.h];if(f.k==='g'){S.mute=1;music();setTimeout(function(){S.mute=0;music();adm()},4000);ST.forEach(function(s){s.goal(f.side,t,f.name,f.min)});sys('⚽ BUT de '+t[0]+' ! '+f.name+' '+f.min+'’')}else{ST.forEach(function(s){s.card(f.k,f.name,T[S.h],f.min)})}}
 function logoHtml(){var l=S.logo;if(l==='img')return '<img src="logo.png" alt="">';if(/^(https:\/\/|data:image\/)/.test(l))return '<img src="'+l+'" alt="">';return l}
-function recv(d,first){PUB.forEach(function(k){if(d[k]!==undefined)S[k]=d[k]});if(S.teams&&S.teams.length>1)T=S.teams;if(S.h>=T.length)S.h=0;if(S.a>=T.length)S.a=Math.min(1,T.length-1);if(first)lastFx=d.fx?d.fx.id:0;if(S.cd){if(S.cd.id!==cdId){cdId=S.cd.id;cdEnd=Date.now()+S.cd.rem}}else{cdEnd=0;cdId=0}all();applyFx(S.fx)}
+function recv(d,first){var pl=S.lm;PUB.forEach(function(k){if(d[k]!==undefined)S[k]=d[k]});if(S.teams&&S.teams.length>1)T=S.teams;if(S.h>=T.length)S.h=0;if(S.a>=T.length)S.a=Math.min(1,T.length-1);if(first)lastFx=d.fx?d.fx.id:0;if(S.cd){if(S.cd.id!==cdId){cdId=S.cd.id;cdEnd=Date.now()+S.cd.rem}}else{cdEnd=0;cdId=0}if(!first&&pl!==S.lm&&sb)loadMatches();all();applyFx(S.fx)}
 function loadState(){if(!sb)return;sb.from('match_state').select('data').eq('id',1).single().then(function(r){if(r.data&&r.data.data&&r.data.data.h!==undefined){recv(r.data.data,true);fillTeams();$('#cl').value=S.logo}})}
 function ui(){var a=$('#acc'),ov=pin==='overlay',np=!!sb&&!isAdmin;$('#gate').hidden=ov||demo||(!!sb&&ready&&!!user);$('#gload').hidden=ready;$('#gform').hidden=!ready;$('#gcfg').hidden=!!sb;$('#gdemo').hidden=!!sb;
   $('#adm').hidden=np;a.hidden=!sb||ov||!user;a.textContent=user?NAME+' · Déconnexion':'';
-  ['admin','overlay'].forEach(function(v){document.querySelector('#nav [data-v="'+v+'"]').hidden=np});
-  if(np&&!ov&&(view==='admin'||view==='overlay'))document.querySelector('#nav [data-v="player"]').click()}
+  ['admin','matchs','overlay'].forEach(function(v){document.querySelector('#nav [data-v="'+v+'"]').hidden=np});
+  if(np&&!ov&&(view==='admin'||view==='matchs'||view==='overlay'))document.querySelector('#nav [data-v="player"]').click()}
 function tr(m){m=String(m||'');if(/invalid login/i.test(m))return 'Pseudo ou mot de passe incorrect.';if(/already registered|already exists/i.test(m))return 'Ce pseudo est déjà pris.';if(/email/i.test(m)&&/invalid/i.test(m))return 'Supabase refuse l’adresse interne : change emailDomain dans config.js (voir le README).';if(/signups? not allowed|disabled/i.test(m))return 'Les inscriptions sont désactivées dans Supabase.';return m}
-function gate(){if(!sb){ui();return}sb.auth.getSession().then(function(r){var s=r.data.session;user=s?s.user:null;isAdmin=false;ready=true;if(!user){music();ui();return}NAME=(user.user_metadata&&user.user_metadata.pseudo)||String(user.email).split('@')[0];sb.from('admins').select('user_id').eq('user_id',user.id).then(function(x){isAdmin=!!(x.data&&x.data.length);if(isAdmin){loadState();loadComps();if(!pin&&view==='player')document.querySelector('#nav [data-v="admin"]').click()}music();ui();castInit()})}).catch(function(){ready=true;ui()})}
+function gate(){if(!sb){ui();return}sb.auth.getSession().then(function(r){var s=r.data.session;user=s?s.user:null;isAdmin=false;ready=true;if(!user){music();ui();return}NAME=(user.user_metadata&&user.user_metadata.pseudo)||String(user.email).split('@')[0];sb.from('admins').select('user_id').eq('user_id',user.id).then(function(x){isAdmin=!!(x.data&&x.data.length);loadComps();loadMatches();if(isAdmin){loadState();if(!pin&&view==='player')document.querySelector('#nav [data-v="admin"]').click()}music();ui();castInit()})}).catch(function(){ready=true;ui()})}
 function pb(){var b=$('#pb');b.className='box s-'+S.sty;mount(b.querySelector('.fs'),S.pt);var s=S.sc;$('#enc').innerHTML='<b>Si le score reste ainsi :</b> '+(s[0]>s[1]?T[S.h][0]+' file':s[0]<s[1]?T[S.a][0]+' file':'égalité, prolongations')+(s[0]===s[1]?'':' en finale.')}
 function adm(){$('#run').textContent=S.run?'Pause':'Coup d’envoi';$('#mus').textContent=S.mus?'Marche':'Arrêt';$('#mus').classList.toggle('on',!!S.mus);$('#eq').classList.toggle('on',!!(S.mus&&!S.mute));$('#rt').textContent=mm(rec.t);var rb=document.querySelector('[data-a="recs"]');if(rb)rb.textContent=rec.st?'● En cours':'● Lancer';
   $('#recl').innerHTML=rec.list.map(function(x){return '<li>'+x+'</li>'}).join('');[].forEach.call($('#fsb').children,function(b){b.classList.toggle('on',b.dataset.f===S.fs&&S.fs!=='')})}
@@ -298,13 +328,13 @@ function fillComps(sel){var s=$('#cps');s.innerHTML='';if(!COMPS.length){s.add(n
 function compSel(){var v=$('#cps').value;for(var i=0;i<COMPS.length;i++)if(String(COMPS[i].id)===v)return COMPS[i];return null}
 function saveLocal(){try{localStorage.setItem('df_comps',JSON.stringify(COMPS));return true}catch(e){cpm('Enregistrement impossible sur cet appareil.');return false}}
 function loadComps(sel){if(!sb){try{COMPS=JSON.parse(localStorage.getItem('df_comps')||'[]')}catch(e){COMPS=[]}fillComps(sel);return}
-  sb.from('competitions').select('*').order('id',{ascending:true}).then(function(r){if(r.error){cpm(cerr(r.error));return}COMPS=r.data||[];fillComps(sel)})}
+  sb.from('competitions').select('*').order('id',{ascending:true}).then(function(r){if(r.error){cpm(cerr(r.error));return}COMPS=r.data||[];fillComps(sel);autoPub()})}
 function teamRow(n,c){var d=document.createElement('div');d.className='r tr';d.innerHTML='<input type="text" class="tn" placeholder="Nom de l’équipe" maxlength="14"><input type="color" class="tc"><button class="b" data-a="cprm" aria-label="Retirer">✕</button>';d.querySelector('.tn').value=n||'';d.querySelector('.tc').value=c||PAL[$('#cpt').children.length%PAL.length];$('#cpt').appendChild(d)}
 function logoPrev(){var i=$('#cpli');i.hidden=!(edit&&edit.logo);if(edit&&edit.logo)i.src=edit.logo}
-function cpOpen(c){edit={id:c?c.id:null,logo:c?c.logo:null};$('#cpn').value=c?c.name:'';$('#cpt').innerHTML='';(c?c.teams:[['','','#1b3f9a'],['','','#d6322e']]).forEach(function(t){teamRow(t[0],t[2])});logoPrev();$('#cped').hidden=false;cpm('')}
+function cpOpen(c){edit={id:c?c.id:null,logo:c?c.logo:null};$('#cpn').value=c?c.name:'';$('#cpc').value=(c&&c.color)||'#e90052';$('#cpt').innerHTML='';(c?c.teams:[['','','#1b3f9a'],['','','#d6322e']]).forEach(function(t){teamRow(t[0],t[2])});logoPrev();$('#cped').hidden=false;cpm('')}
 function cpSave(){var n=$('#cpn').value.trim().toUpperCase();var teams=[].map.call($('#cpt').children,function(r){var nm=r.querySelector('.tn').value.trim().toUpperCase();return [nm,tcode(nm),r.querySelector('.tc').value]}).filter(function(t){return t[0]});
   if(!n){cpm('Donne un nom à la compétition.');return}if(teams.length<2){cpm('Il faut au moins 2 équipes avec un nom.');return}
-  var rc={name:n,logo:edit.logo||null,teams:teams};
+  var rc={name:n,logo:edit.logo||null,teams:teams,color:$('#cpc').value};
   if(!sb){if(edit.id){COMPS=COMPS.map(function(c){return c.id===edit.id?{id:c.id,name:rc.name,logo:rc.logo,teams:rc.teams}:c})}else{rc.id=Date.now();COMPS.push(rc);edit.id=rc.id}
     if(!saveLocal())return;fillComps(edit.id);$('#cped').hidden=true;cpm('Enregistrée ✓ — clique sur « Utiliser » pour l’afficher.');return}
   var q=edit.id?sb.from('competitions').update(rc).eq('id',edit.id).select().single():sb.from('competitions').insert(rc).select().single();
@@ -325,7 +355,7 @@ PH.forEach(function(p,i){var b=document.createElement('button');b.className='b';
 T.slice(0,3).forEach(function(){});
 [['Gagne','#'],['Nul','#'],['Perd','#']].forEach(function(x,i){var b=document.createElement('button');b.className='b';b.dataset.b=i;b.textContent=['Domicile gagne','Match nul','Extérieur gagne'][i]+' · 10 pts';$('#bb').appendChild(b)});
 document.addEventListener('click',function(e){
-  var n=e.target.closest('#nav button');if(n){['admin','player','overlay'].forEach(function(v){$('#v-'+v).hidden=v!==n.dataset.v});[].forEach.call($('#nav').children,function(b){b.classList.toggle('on',b===n)});view=n.dataset.v;ui();all();return}
+  var n=e.target.closest('#nav button');if(n){['admin','matchs','player','overlay'].forEach(function(v){$('#v-'+v).hidden=v!==n.dataset.v});[].forEach.call($('#nav').children,function(b){b.classList.toggle('on',b===n)});view=n.dataset.v;ui();all();return}
   var f=e.target.closest('[data-f]');if(f){S.fs=f.dataset.f;commit();return}
   var p=e.target.closest('#pt [data-p]');if(p){S.pt=p.dataset.p;[].forEach.call($('#pt').children,function(b){b.classList.toggle('pk',b===p)});pb();return}
   var bt=e.target.closest('[data-b]');if(bt){var i=+bt.dataset.b;if(sb)sb.from('bets').insert({pick:i});bets.push([T[S.h][1]+' gagne',T[S.a][1]+' gagne'][i===0?0:1]);bets[bets.length-1]=['Domicile ('+T[S.h][1]+') gagne','Match nul','Extérieur ('+T[S.a][1]+') gagne'][i]+' · 10 pts';$('#bets').innerHTML=bets.map(function(x){return '<li>'+x+'</li>'}).join('');return}
@@ -369,7 +399,73 @@ document.addEventListener('click',function(e){
 setInterval(function(){if(S.run)S.sec++;if(rec.st===1)rec.t++;if(isAdmin&&lead&&S.run&&S.sec%10===0)push();ST.forEach(function(s){s.bug();s.cdr()});$('#rt').textContent=mm(rec.t);$('#mini').textContent=T[S.h][1]+' '+S.sc[0]+' – '+S.sc[1]+' '+T[S.a][1]+' · '+mm(S.sec)+(S.run?'':' · pause');
   if(isAdmin&&lead&&S.cd&&cdEnd){var rr=cdEnd-Date.now();if(rr<=0&&!kick){kick=1;S.run=1;S.sec=0;S.mus=0;commit()}else if(rr<=-4000){S.cd=null;cdEnd=0;commit()}else if(rr>0&&Math.floor(Date.now()/1000)%5===0)push()}},1000);
 $('#lp').addEventListener('keydown',function(e){if(e.key==='Enter')document.querySelector('[data-a="login"]').click()});
-if(!sb){ready=true;loadComps()}cr();all();ui();
+/* ===== Matchs / pronos ===== */
+try{var tt=localStorage.getItem('df_theme');if(tt)document.documentElement.dataset.theme=tt}catch(_){}
+var MT=[],PR={},pc=null,ptab='m',intro=0,ap=0,PH2=['Quarts','Demies','Finale'];
+function cbyid(i){for(var k=0;k<COMPS.length;k++)if(String(COMPS[k].id)===String(i))return COMPS[k];return null}
+function ck(c){return (c&&c.color)||'#e90052'}
+function curComp(){for(var k=0;k<COMPS.length;k++)if(esc(COMPS[k].name)===S.comp)return COMPS[k];return null}
+function pts(p,m){if(!p||m.sh==null)return 0;if(p.h===m.sh&&p.a===m.sa)return 3;return Math.sign(p.h-p.a)===Math.sign(m.sh-m.sa)?1:0}
+function loadMatches(){if(!sb)return;sb.from('matches').select('*').order('kickoff',{ascending:true}).then(function(r){if(r.error)return;MT=r.data||[];mppR();mlR();
+  if(user)sb.from('predictions').select('match_id,h,a').eq('user_id',user.id).then(function(x){PR={};(x.data||[]).forEach(function(p){PR[p.match_id]=p});mppR();introGo()})})}
+function tb(c,n){var t=(c&&c.teams||[]).filter(function(x){return x[0]===n})[0];return '<div class="tm2"><span class="bd" style="background:'+(t?t[2]:'#555')+'">'+esc(t?t[1]:n.slice(0,3))+'</span>'+esc(n)+'</div>'}
+function mcard(m,c){var live=S.lm===m.id,p=PR[m.id],mid,f;
+  if(live)mid=S.sc[0]+' : '+S.sc[1];else if(m.status==='done')mid=m.sh+' : '+m.sa;
+  else mid='<input class="pi" type="number" min="0" max="99" data-x="pi" data-m="'+m.id+'" value="'+(p?p.h:'')+'"><b>:</b><input class="pi" type="number" min="0" max="99" data-x="pi" data-m="'+m.id+'" value="'+(p?p.a:'')+'">';
+  f=live?'<b style="color:#e90052">● EN DIRECT · touche pour regarder</b>':m.status==='done'?'Ton prono '+(p?p.h+'–'+p.a+' · +'+pts(p,m)+' pt'+(pts(p,m)>1?'s':''):'—'):new Date(m.kickoff).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+(p?' · prono enregistré ✓':'');
+  return '<div class="mc'+(live?' lv':'')+'" style="--k:'+ck(c)+'"'+(live?' data-x="lv"':'')+'><div class="mr">'+tb(c,m.home)+'<div class="sc2">'+mid+'</div>'+tb(c,m.away)+'</div><div class="mf">'+f+'</div></div>'}
+function stRows(c,src){var a=(src||[]).map(function(r){return {t:r.t,v:+r.v||0,n:+r.n||0,d:+r.d||0,df:+r.df||0}});a.forEach(function(r){r.j=r.v+r.n+r.d;r.p=3*r.v+r.n});return a.sort(function(x,y){return y.p-x.p||y.df-x.df})}
+function stTable(c){var a=stRows(c,c.pub);if(!a.length)return '<p class="lbl">Classement pas encore publié.</p>';return '<table class="cl"><tr><th>Équipe</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Diff</th><th>Pts</th></tr>'+a.map(function(r,i){return '<tr><td>'+(i+1)+'. '+esc(r.t)+'</td><td>'+r.j+'</td><td>'+r.v+'</td><td>'+r.n+'</td><td>'+r.d+'</td><td>'+(r.df>0?'+':'')+r.df+'</td><td><b>'+r.p+'</b></td></tr>'}).join('')+'</table><p class="lbl">Mis à jour le '+(c.pub_at?new Date(c.pub_at).toLocaleDateString('fr-FR'):'—')+'</p>'}
+function brHas(c){return c&&MT.some(function(m){return m.comp_id===c.id&&PH2.indexOf(m.phase)>=0})}
+function brHtml(c){if(!brHas(c))return '<p class="lbl">L’arbre apparaît dès que des matchs Quarts / Demies / Finale existent.</p>';return '<div class="bk">'+PH2.map(function(p){var l=MT.filter(function(m){return m.comp_id===c.id&&m.phase===p});return l.length?'<div><div class="dayh">'+p+'</div>'+l.map(function(m){var d=m.status==='done';return '<div class="m2"><div><span>'+esc(m.home)+'</span><b>'+(d?m.sh:'')+'</b></div><div><span>'+esc(m.away)+'</span><b>'+(d?m.sa:'')+'</b></div></div>'}).join('')+'</div>':''}).join('')+'</div>'}
+function mppR(){var c=cbyid(pc)||COMPS[0],h='';if(c)pc=c.id;
+  $('#chips').innerHTML=COMPS.map(function(x){return '<button class="chip'+(x.id===pc?' on':'')+'" style="--k:'+ck(x)+'" data-x="pc" data-c="'+x.id+'">'+esc(x.name)+'</button>'}).join('');
+  [].forEach.call(document.querySelectorAll('[data-x=tb]'),function(b){b.classList.toggle('pk',b.dataset.t===ptab)});
+  if(!c)h='<p class="lbl">Aucun championnat pour l’instant.</p>';
+  else if(ptab==='m'){var ms=MT.filter(function(m){return m.comp_id===c.id}),last='';if(!ms.length)h='<p class="lbl">Pas encore de match.</p>';ms.forEach(function(m){var d=new Date(m.kickoff).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});if(d!==last){last=d;h+='<div class="dayh">'+d+'</div>'}h+=mcard(m,c)})}
+  else if(ptab==='c')h=stTable(c);else h=brHtml(c);
+  $('#mb').innerHTML=h}
+function introGo(){if(intro||!user||isAdmin)return;var d=MT.filter(function(m){return m.status==='done'&&PR[m.id]}).slice(-6);if(!d.length)return;intro=1;
+  try{if(sessionStorage.getItem('df_intro'))return;sessionStorage.setItem('df_intro','1')}catch(_){}
+  var c=cbyid(d[d.length-1].comp_id),tot=0,rows=d.map(function(m,i){var p=pts(PR[m.id],m);tot+=p;return '<div class="ir" style="--i:'+i+'"><span>'+esc(m.home)+' '+m.sh+'–'+m.sa+' '+esc(m.away)+'</span><span>prono '+PR[m.id].h+'–'+PR[m.id].a+' · <b>+'+p+'</b></span></div>'}).join('');
+  var e=$('#intro');e.style.setProperty('--k',ck(c));e.innerHTML='<h2>'+esc(c?c.name:'')+'</h2><p>Tes derniers pronos</p>'+rows+'<div class="ir tot" style="--i:'+d.length+'"><span>Total</span><b>'+tot+' pts</b></div><button class="b" data-x="ix">Continuer</button>';e.hidden=false}
+document.addEventListener('change',function(e){var i=e.target.closest('[data-x=pi]');if(!i||!user||!sb)return;var box=i.closest('.mc'),v=[].map.call(box.querySelectorAll('.pi'),function(x){return x.value});if(v[0]===''||v[1]==='')return;
+  var id=+i.dataset.m,p={match_id:id,user_id:user.id,h:Math.max(0,Math.min(99,+v[0])),a:Math.max(0,Math.min(99,+v[1]))};PR[id]=p;
+  sb.from('predictions').upsert(p).then(function(r){box.querySelector('.mf').textContent=r.error?'Prono refusé (le match a commencé ?)':'Prono enregistré ✓'})});
+/* Admin : matchs + classement */
+function mcFill(){var s=$('#mc'),v=s.value;s.innerHTML='';COMPS.forEach(function(c){s.add(new Option(c.name,c.id))});if(v)s.value=v;mtFill();mlR();sR()}
+function mtFill(){var c=cbyid($('#mc').value);['#mh','#ma'].forEach(function(q,j){var s=$(q);s.innerHTML='';(c?c.teams:[]).forEach(function(t){s.add(new Option(t[0],t[0]))});if(c&&c.teams.length>1)s.selectedIndex=j})}
+$('#mc').onchange=function(){mtFill();mlR();sR()};
+var _fc=fillComps;fillComps=function(sel){_fc(sel);mcFill();mppR()};
+function mNew(){var c=cbyid($('#mc').value),h=$('#mh').value,a=$('#ma').value,d=$('#md').value,m=$('#mm');
+  if(!sb){m.textContent='Les matchs demandent Supabase (lance migration-matchs.sql).';return}
+  if(!c||!h||!a||h===a||!d){m.textContent='Choisis un championnat, deux équipes différentes et une date.';return}
+  sb.from('matches').insert({comp_id:c.id,home:h,away:a,kickoff:new Date(d).toISOString(),phase:$('#mp').value}).then(function(r){m.textContent=r.error?cerr(r.error):'Match créé ✓';if(!r.error)loadMatches()})}
+function mlR(){var c=cbyid($('#mc').value),b=$('#ml');if(!c){b.innerHTML='';return}var l=MT.filter(function(m){return m.comp_id===c.id});
+  b.innerHTML=l.length?l.map(function(m){var lv=S.lm===m.id,st=lv?'● direct':m.status==='done'?m.sh+'–'+m.sa:'à venir';return '<div class="r"><b style="flex:1;min-width:150px">'+esc(m.home)+' – '+esc(m.away)+'<br><span class="lbl">'+new Date(m.kickoff).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+' · '+esc(m.phase)+' · '+st+'</span></b>'+(m.status==='done'?'':'<button class="b'+(lv?' on':'')+'" data-x="mlive" data-m="'+m.id+'">'+(lv?'Terminer':'Direct')+'</button>')+'<button class="b rd" data-x="mdel" data-m="'+m.id+'">✕</button></div>'}).join(''):'<p class="lbl">Aucun match.</p>'}
+function mLive(id){var m=MT.filter(function(x){return x.id===id})[0],c=m&&cbyid(m.comp_id);if(!c)return;if(S.lm&&S.lm!==id){alert('Termine d’abord le match en direct.');return}
+  T=c.teams.map(function(t){return [esc(t[0]),t[1],t[2]]});var nm=T.map(function(t){return t[0]});S.teams=T;S.comp=esc(c.name);S.logo=c.logo||'img';S.h=Math.max(0,nm.indexOf(esc(m.home)));S.a=Math.max(0,nm.indexOf(esc(m.away)));S.sc=[0,0];S.sec=0;S.run=0;S.fs='';S.lt=null;S.cd=null;cdEnd=0;S.lm=id;
+  fillTeams();$('#cn').value=c.name;$('#cl').value=S.logo;commit();sb.from('matches').update({status:'live'}).eq('id',id).then(function(){loadMatches()})}
+function mDone(id){var q={status:'done',sh:S.sc[0],sa:S.sc[1]};S.lm=null;S.run=0;commit();sb.from('matches').update(q).eq('id',id).then(function(){loadMatches()})}
+function mDel(id){if(!confirm('Supprimer ce match ?'))return;if(S.lm===id){S.lm=null;commit()}sb.from('matches').delete().eq('id',id).then(function(){loadMatches()})}
+function sR(){var c=cbyid($('#mc').value),b=$('#sl');if(!c){b.innerHTML='';return}var d=c.standings||[];
+  b.innerHTML='<table class="cl"><tr><th></th><th>V</th><th>N</th><th>D</th><th>Diff</th></tr>'+c.teams.map(function(t,i){var r=d.filter(function(x){return x.t===t[0]})[0]||{};return '<tr data-i="'+i+'"><td>'+esc(t[0])+'</td>'+['v','n','d','df'].map(function(f){return '<td><input type="number" class="pi" style="width:52px;height:38px" data-f="'+f+'" value="'+(r[f]||0)+'"></td>'}).join('')+'</tr>'}).join('')+'</table>'}
+function sSave(pub){var c=cbyid($('#mc').value),m=$('#sm');if(!c||!sb)return;
+  var rows=[].map.call($('#sl').querySelectorAll('tr[data-i]'),function(tr){var o={t:c.teams[+tr.dataset.i][0]};[].forEach.call(tr.querySelectorAll('input'),function(i){o[i.dataset.f]=+i.value||0});return o});
+  sb.from('competitions').update({standings:rows}).eq('id',c.id).then(function(r){if(r.error){m.textContent=cerr(r.error);return}c.standings=rows;
+    if(!pub){m.textContent='Brouillon enregistré ✓ (pas encore visible des joueurs).';return}
+    sb.rpc('publish_standings',{cid:c.id}).then(function(x){m.textContent=x.error?cerr(x.error):'Classement publié ✓';if(!x.error){c.pub=rows;c.pub_at=new Date().toISOString()}})})}
+function autoPub(){if(ap||!sb||!isAdmin)return;ap=1;var n=new Date(),mon=new Date(n);mon.setHours(0,0,0,0);mon.setDate(n.getDate()-((n.getDay()+6)%7));
+  COMPS.forEach(function(c){if(c.standings&&c.standings.length&&(!c.pub_at||new Date(c.pub_at)<mon)){sb.rpc('publish_standings',{cid:c.id});c.pub_at=new Date().toISOString()}})}
+document.addEventListener('click',function(e){var x=e.target.closest('[data-x]');if(!x)return;var k=x.dataset.x,id=+x.dataset.m;
+  if(k==='thm'){var r=document.documentElement,dk=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=dk?'light':'dark';try{localStorage.setItem('df_theme',r.dataset.theme)}catch(_){}}
+  else if(k==='pc'){pc=+x.dataset.c;mppR()}else if(k==='tb'){ptab=x.dataset.t;mppR()}
+  else if(k==='rf'){loadComps();loadMatches()}
+  else if(k==='lv'){$('#mpp').hidden=true;$('#lv').hidden=false}else if(k==='bk'){$('#lv').hidden=true;$('#mpp').hidden=false}
+  else if(k==='ix')$('#intro').hidden=true;
+  else if(k==='mnew')mNew();else if(k==='mlive'){if(S.lm===id)mDone(id);else mLive(id)}else if(k==='mdel')mDel(id);
+  else if(k==='ssave')sSave(0);else if(k==='spub')sSave(1)});
+if(!sb){ready=true;loadComps()}cr();all();ui();if(sb&&pin==='overlay'){loadComps();loadMatches()}
 if(sb){
   gate();loadState();
   sb.channel('live').on('postgres_changes',{event:'UPDATE',schema:'public',table:'match_state'},function(p){var d=p.new.data||{};if(d.src===CID)return;if(isAdmin)lead=false;recv(d);if(isAdmin)fillTeams()}).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat'},function(p){chat.push([esc(p.new.name),esc(p.new.msg)]);cr()}).subscribe();
