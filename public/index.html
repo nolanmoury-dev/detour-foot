@@ -143,7 +143,7 @@ label.b{display:inline-block}
 .cdv span{padding:.4cqw 2cqw;background:#ffffff1f;border-left:.8cqw solid var(--c)}
 .cdv em{font-style:normal;font-size:3cqw;opacity:.7}
 .cdp{position:absolute;left:0;bottom:0;height:1.2cqw;width:100%;background:#fff;transform-origin:left}
-.cd.hud{inset:auto;left:2cqw;top:2cqw;width:auto;align-items:flex-start;text-align:left;padding:1.6cqw 2.4cqw;border-radius:1cqw;background:#000b;z-index:6;animation:none}.cd.hud:before,.cd.hud:after,.cd.hud small,.cd.hud .cdp{display:none}.cd.hud .cdv{order:1;margin:0 0 1cqw;font-size:2.8cqw;gap:1.2cqw}.cd.hud .cdv em{font-size:1.8cqw}.cd.hud .cdt{order:2;font-size:2.2cqw;margin:0}.cd.hud .cdn{order:3;font-size:7cqw;animation:none}
+.cd.hud{inset:auto;left:2cqw;top:2cqw;width:auto;align-items:flex-start;text-align:left;padding:1.6cqw 2.4cqw;border-radius:1cqw;background:#0000005c;text-shadow:0 .2cqw .8cqw #000;z-index:6;animation:none}.cd.hud:before,.cd.hud:after,.cd.hud small,.cd.hud .cdp{display:none}.cd.hud .cdv{order:1;margin:0 0 1cqw;font-size:2.8cqw;gap:1.2cqw}.cd.hud .cdv em{font-size:1.8cqw}.cd.hud .cdt{order:2;font-size:2.2cqw;margin:0}.cd.hud .cdn{order:3;font-size:7cqw;animation:none}
 input[type=password]{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:6px;padding:6px 8px;flex:1;min-width:120px}
 input[type=color]{width:46px;height:42px;padding:0;border:2px solid var(--line);border-radius:6px;background:none;cursor:pointer;flex:none}
 .cpli{height:38px;width:auto;border-radius:6px;background:#38003c;padding:3px}
@@ -275,7 +275,7 @@ function mk(el,pub){
   var o={pub:pub,fk:null,lk:null,cdk:0,
   cdr:function(){var c=q('cd'),r=cdEnd?cdEnd-Date.now():null;if(!S.cd||r===null||r<-6000){c.classList.remove('on');this.cdk=0;return}
     if(!this.cdk){this.cdk=1;c.innerHTML='<small>'+S.comp+'</small><div class="cdt">Coup d’envoi dans</div><b class="cdn"></b><div class="cdv"><span style="--c:'+T[S.h][2]+'">'+T[S.h][0]+'</span><em>VS</em><span style="--c:'+T[S.a][2]+'">'+T[S.a][0]+'</span></div><div class="cdp"></div>';void c.offsetWidth;c.classList.add('on')}
-    c.querySelector('.cdn').textContent=r>0?mm(Math.ceil(r/1000)):'GO !';c.querySelector('.cdt').style.visibility=r>0?'visible':'hidden';c.querySelector('.cdp').style.transform='scaleX('+Math.max(0,Math.min(1,r/S.cd.tot))+')'},
+    c.classList.toggle('hud',!!(S.ad&&S.ad.ph==='pre'&&q('adl').classList.contains('on')&&r>0));c.querySelector('.cdn').textContent=r>0?mm(Math.ceil(r/1000)):'GO !';c.querySelector('.cdt').style.visibility=r>0?'visible':'hidden';c.querySelector('.cdp').style.transform='scaleX('+Math.max(0,Math.min(1,r/S.cd.tot))+')'},
   adl:function(){var L=q('adl'),v=L.firstChild,fr=v.nextSibling,tx=L.lastChild,P=this.pub&&S.ad&&el.offsetParent?adCfg():null,show=0,snd=0,pg=0,me=this;
     if(P){var vs=P.v||[],has=vs.length>0,pre=S.ad.ph==='pre',r=(S.cd&&cdEnd)?cdEnd-Date.now():null,cut=pre&&r!==null&&r<=10000;
       if(AD.id!==S.ad.id){AD.id=S.ad.id;AD.idx=0;AD.mode='v';clearTimeout(AD.tm)}
