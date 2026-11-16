@@ -85,3 +85,12 @@ end $$;
 grant execute on function public.my_wallet() to authenticated;
 grant execute on function public.place_bet(bigint, smallint, int) to authenticated;
 grant execute on function public.settle_match(bigint) to authenticated;
+
+
+-- À lancer UNE fois dans Supabase > SQL Editor (après migration-ballons.sql).
+-- Autorise les pages web (.html) comme pubs, en plus des vidéos.
+update storage.buckets set allowed_mime_types = array[
+  'video/mp4','video/webm','video/quicktime','video/x-m4v',
+  'audio/mpeg','audio/mp4','audio/wav','audio/ogg',
+  'image/png','image/jpeg','image/webp','image/gif',
+  'text/html'] where id = 'media';
