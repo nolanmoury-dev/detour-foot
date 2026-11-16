@@ -1,0 +1,65 @@
+-- À lancer UNE fois dans Supabase > SQL Editor (après schema.sql).
+-- Ajoute : couleur + classement des championnats, matchs, pronos des joueurs.
+
+alter table public.competitions
+  add column if not exists color text default '#e90052',
+  add column if not exists standings jsonb default '[]',   -- brouillon (opérateur)
+  add column if not exists pub jsonb default '[]',         -- version publiée (lue par les joueurs)
+  add column if not exists pub_at timestamptz;
+
+-- Les joueurs doivent pouvoir lire les championnats
+drop policy if exists "compétitions: lecture" on public.competitions;
+create policy "compétitions: lecture" on public.competitions for select using (true);
+
+create table if not exists public.matches (
+  id bigint generated always as identity primary key,
+  comp_id bigint not null references public.competitions (id) on delete cascade,
+  home text not null,
+  away text not null,
+  kickoff timestamptz not null,
+  phase text not null default 'Journée',   -- Journée, Quarts, Demies, Finale
+  status text not null default 'soon' check (status in ('soon','live','done')),
+  sh int, sa int,
+  created_at timestamptz not null default now()
+);
+alter table public.matches enable row level security;
+drop policy if exists "matchs: lecture" on public.matches;
+drop policy if exists "matchs: admin" on public.matches;
+create policy "matchs: lecture" on public.matches for select using (true);
+create policy "matchs: admin" on public.matches for all
+  using (exists (select 1 from public.admins a where a.user_id = auth.uid()))
+  with check (exists (select 1 from public.admins a where a.user_id = auth.uid()));
+
+create table if not exists public.predictions (
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  match_id bigint not null references public.matches (id) on delete cascade,
+  h smallint not null check (h between 0 and 99),
+  a smallint not null check (a between 0 and 99),
+  primary key (user_id, match_id)
+);
+alter table public.predictions enable row level security;
+drop policy if exists "pronos: lecture" on public.predictions;
+drop policy if exists "pronos: ajout" on public.predictions;
+drop policy if exists "pronos: modif" on public.predictions;
+create policy "pronos: lecture" on public.predictions for select to authenticated using (user_id = auth.uid());
+create policy "pronos: ajout" on public.predictions for insert to authenticated
+  with check (user_id = auth.uid() and exists (select 1 from public.matches m where m.id = match_id and m.status = 'soon'));
+create policy "pronos: modif" on public.predictions for update to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid() and exists (select 1 from public.matches m where m.id = match_id and m.status = 'soon'));
+
+-- Publication du classement (réservée à l'opérateur)
+create or replace function public.publish_standings(cid bigint) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not exists (select 1 from public.admins where user_id = auth.uid()) then
+    raise exception 'not authorized';
+  end if;
+  update public.competitions set pub = standings, pub_at = now() where id = cid;
+end $$;
+grant execute on function public.publish_standings(bigint) to authenticated;
+
+-- OPTIONNEL : publication automatique chaque lundi à 3h, même sans ouvrir le site
+-- (Database > Extensions > active pg_cron, puis décommente) :
+-- select cron.schedule('classement-lundi', '0 3 * * 1',
+--   $$update public.competitions set pub = standings, pub_at = now()$$);
