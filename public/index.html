@@ -934,11 +934,24 @@ document.addEventListener('click',function(e){var x=e.target.closest('[data-x]')
  else if(k==='hladd'&&c){var P2=pmGet('ht');if(P2.v.length>=10){hlMsg('10 éléments maximum dans la mi-temps.');return}P2.v.push({u:c.url,n:c.t,k:'h',cid:c.id});APH='ht';adUI();commit();hlMsg('Ajouté à la mi-temps ✓ Règle l’ordre avec ▲ ▼ dans « Vidéos et phrases ».')}
  else if(k==='adup'||k==='addn'){var P1=pmGet(APH),n=+x.dataset.n,m2=k==='adup'?n-1:n+1;if(m2>=0&&m2<P1.v.length){var tq=P1.v[n];P1.v[n]=P1.v[m2];P1.v[m2]=tq;adUI();commit()}}
  else if(k==='adi2x'){pmGet('h2').v=[];$('#adi2q').textContent='Intro retirée.';commit()}
+ else if(k==='adrn'){if(sb&&!isAdmin)return;var it1=lst(x.dataset.s)[+x.dataset.n];if(it1){var n2=prompt('Nom de la pub',it1.n||'');if(n2&&n2.trim()){it1.n=n2.trim().slice(0,60);if(it1.cid){var cc=S.hl.filter(function(z){return z.id===it1.cid})[0];if(cc){cc.t=it1.n;hlA='';rdA=''}}adUI();tvUI();commit()}}}
+ else if(k==='adpv'){if(sb&&!isAdmin)return;var it2=lst(x.dataset.s)[+x.dataset.n];if(it2)pvOpen(it2)}
+ else if(k==='pvx')pvClose();
  else if(k==='rdx')rdClose();
  else if(k==='rdplay'&&c){var v=rdo.firstChild;v.src=c.url;v.muted=false;rdo.classList.add('on');var s0=c.s||0,go=function(){v.play().catch(function(){})};v.onloadedmetadata=function(){if(s0>0)seekTo(v,s0,go);else go()};v.ontimeupdate=function(){if(v.currentTime>=s0+c.len){v.currentTime=s0}};v.load()}});
 $('#phx').parentNode.insertAdjacentHTML('afterend','<div class="r"><button class="b pk" data-x="hlsv">● Enregistrer un temps fort (≈15 dernières s)</button></div><p class="lbl" id="hlm">Le texte ci-dessus sert de titre. ✎ Nom = renommer · + Mi-temps = l’ajouter à la liste de la mi-temps · ▶ = le montrer tout de suite.</p><div id="hll"></div>');
 setInterval(function(){hlR();rdR()},1000);hlR();rdR();
-var _adUI=adUI;adUI=function(){_adUI();[].forEach.call($('#adli').children,function(li,i){li.insertAdjacentHTML('beforeend',' <button class="b" data-x="adup" data-n="'+i+'">▲</button><button class="b" data-x="addn" data-n="'+i+'">▼</button>')})};adUI();
+function lst(k){return k==='ad'?pmGet(APH).v:k==='tvl'?tvGet().loop:tvGet().ads}
+function decor(ul,arr,k){if(!ul)return;[].forEach.call(ul.children,function(li,i){var x=arr[i];if(!x)return;var rm=li.querySelector('[data-x=adrm],[data-x=tvrm]'),ic=k==='ad'?(x.k==='p'?'🌐 ':x.k==='h'?'⭐ ':'🎬 '):(k==='tvl'?'🔁 ':'🎬 ');
+ li.innerHTML=ic+'<a data-x="adpv" data-s="'+k+'" data-n="'+i+'" style="cursor:pointer;text-decoration:underline">'+esc(x.n||'')+'</a>'+(x.d?' ('+mm(x.d)+')':'')+' <button class="b" data-x="adrn" data-s="'+k+'" data-n="'+i+'">✎</button>'+(k==='ad'?'<button class="b" data-x="adup" data-n="'+i+'">▲</button><button class="b" data-x="addn" data-n="'+i+'">▼</button>':'')+(rm?rm.outerHTML:'')})}
+var _adUI=adUI;adUI=function(){_adUI();decor($('#adli'),pmGet(APH).v,'ad')};
+var _tvUI=tvUI;tvUI=function(){_tvUI();if(!$('#tvll'))return;decor($('#tvll'),tvGet().loop,'tvl');decor($('#tval'),tvGet().ads,'tva')};
+var pvo=document.createElement('div');pvo.id='pvo';pvo.innerHTML='<div class="pvh"><b id="pvt"></b><button class="b" data-x="pvx">✕ Fermer</button></div><video playsinline controls></video><iframe sandbox="allow-scripts" title="aperçu"></iframe>';document.body.appendChild(pvo);
+var pst=document.createElement('style');pst.textContent="#pvo{position:fixed;inset:0;z-index:9999;background:#000;display:none;flex-direction:column}#pvo.on{display:flex}.pvh{display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;background:#111}.pvh b{flex:1;color:#fff;font:700 18px 'Barlow Condensed',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#pvo video,#pvo iframe{flex:1;min-height:0;width:100%;border:0;background:#000}#pvo iframe{background:#fff;display:none}#pvo.pg video{display:none}#pvo.pg iframe{display:block}";document.head.appendChild(pst);
+function pvOpen(it){var v=pvo.querySelector('video'),fr=pvo.querySelector('iframe');$('#pvt').textContent=it.n||'';pvo.classList.add('on');
+ if(it.k==='p'){pvo.classList.add('pg');v.pause();v.removeAttribute('src');adHtml(it.u).then(function(h){fr.srcdoc=h})}else{pvo.classList.remove('pg');fr.srcdoc='';v.src=it.u;v.muted=false;v.play().catch(function(){})}}
+function pvClose(){var v=pvo.querySelector('video');v.pause();v.removeAttribute('src');v.load();pvo.querySelector('iframe').srcdoc='';pvo.classList.remove('on')}
+adUI();tvUI();
 $('#adiq').insertAdjacentHTML('afterend','<div class="r"><label class="b">🎬 Intro 2e mi-temps<input type="file" id="adi2" accept="video/*" hidden></label><button class="b" data-x="adi2x">Retirer</button></div><p class="lbl" id="adi2q">Ordre à la mi-temps : pubs, temps forts, pubs (tu règles avec ▲ ▼ dans la liste « Mi-temps »). Au clic sur « 2e mi-temps », cette intro passe en plein écran, puis la 2e mi-temps démarre toute seule.</p>');
 $('#adi2').onchange=async function(){var f=this.files[0],q=$('#adi2q');this.value='';if(!f)return;if(f.size>52428800){q.textContent='Trop lourde (50 Mo max).';return}
  var d=await vdur(f);if(!d){q.textContent='Durée illisible : essaie un .mp4.';return}var u;
