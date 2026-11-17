@@ -242,6 +242,8 @@ body.hasb #snd{bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}
 .tvm .tms{font-size:3cqw;letter-spacing:.2em}
 .tvm .tmg{background:#e90052;padding:.2cqw 1.6cqw;font-size:2.4cqw;letter-spacing:.2em}
 .tvm .tmg.lv{animation:bk 1.3s infinite}
+#tvcv{z-index:3;display:none}.tvbox.cap #tvcv{display:block}
+#tvcl{z-index:5}.tvbox.cap #tvcl{display:block}
 </style>
 <body>
 <div id="gate"><div class="gbox"><img src="logo.png" alt=""><h1>DÉTOUR FOOT</h1>
@@ -276,6 +278,7 @@ body.hasb #snd{bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}
 <div class="r"><label class="b">🎬 Pubs de la TV (1 à 10)<input type="file" id="tvaf" accept="video/*" multiple hidden></label><button class="b" data-x="tvac">Vider</button></div><ul class="l" id="tval"></ul>
 <div class="r"><span class="lbl">Une coupure pub toutes les</span><select id="tvev"><option value="1">1 min</option><option value="2">2 min</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30">30 min</option></select></div>
 <h5>Match sur la TV</h5><div class="r"><select id="tvmch"><option value="2">Sur la chaîne 2</option><option value="1">Sur la chaîne 1</option><option value="0">Sur les deux</option></select></div><div class="r"><button class="b pk" data-x="tvmcd">⏱ Prochain match (compte à rebours)</button><button class="b pk" data-x="tvmlv">● Match en direct</button><button class="b" data-x="tvmoff">Retirer</button></div><p class="lbl" id="tvmm">Affiche par-dessus la chaîne choisie : le prochain match prévu (onglet Matchs) avec son compte à rebours, ou le score en direct. « Retirer » remet les vidéos.</p>
+<h5>Direct d’un onglet / d’une vidéo</h5><div class="r"><button class="b pk" data-x="tvcs">🖥 Diffuser un onglet</button><button class="b rd" data-x="tvcx">Arrêter le direct</button></div><p class="lbl" id="tvcm">Choisis l’onglet (YouTube, un match…) ou une fenêtre : tout le monde le voit en direct sur la chaîne que tu modifies. Coche « Partager l’audio de l’onglet » pour avoir le son. Ordinateur seulement (Chrome ou Edge), ouvre le site directement. Le direct passe devant les vidéos ; l’affiche de match reste par-dessus.</p>
 <div class="r"><button class="b pk" data-x="tvon">▶ Lancer l’émission</button><button class="b" data-x="tvloop">Boucle seule</button><button class="b rd" data-x="tvoff">Éteindre la TV</button></div>
 <p class="lbl" id="tvq">Les vidéos passent en boucle quand il n’y a pas d’émission. « Lancer l’émission » démarre l’émission principale depuis le début, avec toutes les pubs à la suite à chaque coupure. À la fin de l’émission, la boucle reprend. Tout le monde voit la même chose au même moment (50 Mo max par vidéo).</p></div>
 <div class="panel"><h4>Match</h4><div class="r"><select id="th"></select><span>vs</span><select id="ta"></select></div><div class="r"><button class="b pk" data-a="run" id="run">Coup d’envoi</button></div><h5>Temps du match</h5><div class="r"><span class="lbl">Mi-temps réelle</span><button class="b" data-x="dur" data-v="3">3 min</button><button class="b" data-x="dur" data-v="5">5 min</button></div><div class="r"><span class="lbl">Additionnel</span><button class="b" data-x="add" data-v="0">+0</button><button class="b" data-x="add" data-v="1">+1</button><button class="b" data-x="add" data-v="2">+2</button><button class="b" data-x="add" data-v="3">+3</button><button class="b" data-x="add" data-v="4">+4</button><button class="b" data-x="add" data-v="5">+5</button></div><div class="r"><button class="b" data-x="endh">Fin de mi-temps</button><button class="b pk" data-x="h2">2e mi-temps</button></div><p class="lbl" id="tinfo"></p>
@@ -298,7 +301,7 @@ body.hasb #snd{bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}
 <div class="box" id="pb"><div class="fs"></div></div><p id="enc"></p></div>
 <div class="panel"><h4>Chat</h4><div id="chat"></div><div class="r"><input type="text" id="cm" placeholder="Écrire un message…" maxlength="120"><button class="b pk" data-a="send">Envoyer</button></div></div>
 </div></section>
-<section id="v-tv" hidden><div id="tvw"><div class="tvh"><b id="tvt">📺 TV DÉTOUR</b><button class="b pk" data-x="tvch" data-c="1">TV 1</button><button class="b" data-x="tvch" data-c="2">TV 2</button><button class="b" data-x="tvfs" style="margin-left:auto">⛶ Plein écran</button></div><div class="tvbox" id="tvbox"><video id="tvv" playsinline autoplay muted></video><div class="tvo" id="tvo"></div><div class="tvx" id="tvx">TV éteinte<br>reviens plus tard</div><div class="tvm" id="tvmo"></div></div><p class="lbl" id="tvm"></p></div></section>
+<section id="v-tv" hidden><div id="tvw"><div class="tvh"><b id="tvt">📺 TV DÉTOUR</b><button class="b pk" data-x="tvch" data-c="1">TV 1</button><button class="b" data-x="tvch" data-c="2">TV 2</button><button class="b" data-x="tvfs" style="margin-left:auto">⛶ Plein écran</button></div><div class="tvbox" id="tvbox"><video id="tvv" playsinline autoplay muted></video><div class="tvo" id="tvo"></div><div class="tvx" id="tvx">TV éteinte<br>reviens plus tard</div><video id="tvcv" playsinline autoplay muted></video><div class="tvo ad" id="tvcl">● Direct</div><div class="tvm" id="tvmo"></div></div><p class="lbl" id="tvm"></p></div></section>
 <section id="v-paris" hidden><div id="pwr"><div class="r"><b class="ttl">PARIS</b></div><div id="pw"></div></div></section>
 <section id="v-replay" hidden><div id="rpw"><div class="r"><b class="ttl">REDIFFUSIONS</b></div><div class="panel"><p class="lbl">Aucune rediffusion pour l’instant. Les anciens matchs en direct apparaîtront ici.</p></div></div></section>
 <section id="v-settings" hidden><div id="stw"><div class="panel"><h4>Profil</h4><div class="r"><b id="pfn" style="flex:1"></b><span id="pfb"></span></div></div><div class="panel"><h4>Réglages</h4><div class="r"><span class="lbl" style="flex:1">Apparence</span><button class="b" data-x="thm" aria-label="Thème">☾ / ☀</button></div><div class="r"><button class="b" data-a="acc">Se déconnecter</button></div></div></div></section>
@@ -382,7 +385,7 @@ function synthOn(){if(sy)return;AC=AC||new (window.AudioContext||window.webkitAu
     note(220*Math.pow(2,c[n%3]/12),t,.4,'sawtooth',.1);if(n%8===0)note(110*Math.pow(2,c[0]/12),t,1.8,'triangle',.25);n++},250)}}
 function synthOff(){if(sy){clearInterval(sy.id);sy.g.disconnect();sy=null}}
 function music(){sndUI();if(sb&&isAdmin){synthOff();aud.pause();return}var v=(S.vol||0)/100;
-  if(!(S.mus&&!S.mute&&unlocked&&!AD.snd&&!(view==='tv'&&S[tvKey(VCH)]&&S[tvKey(VCH)].on))){synthOff();aud.pause();return}
+  if(!(S.mus&&!S.mute&&unlocked&&!AD.snd&&!(view==='tv'&&S[tvKey(VCH)]&&(S[tvKey(VCH)].on||S[tvKey(VCH)].cap)))){synthOff();aud.pause();return}
   if(S.mv&&S.mv.url){synthOff();if(cur!==S.mv.url){cur=S.mv.url;aud.src=cur}aud.volume=v;var pr=aud.play();if(pr&&pr.catch)pr.catch(function(){})}
   else{aud.pause();synthOn();sy.g.gain.value=v}}
 var user=null,ready=false,demo=false,mr=null,chunks=[],stream=null,view='admin',pin=new URLSearchParams(location.search).get('view'),CFG=window.APP_CONFIG||{},sb=(window.supabase&&CFG.url&&CFG.anonKey)?window.supabase.createClient(CFG.url,CFG.anonKey):null,isAdmin=!sb,lastFx=0,NAME='Joueur'+(100+Math.floor(Math.random()*900)),PUB=['h','a','sc','sec','run','sty','comp','logo','fs','lt','mus','mv','vol','cd','fx','teams','lm','half','dur','add','lbl','rp','nsb','bg','tk','stats','lu','pm','ad','tv','tv2','tvm'];
@@ -689,9 +692,9 @@ function tvSum0(a){return (a||[]).reduce(function(n,x){return n+(x.s||0)},0)}
 function tvUI(){var t=S[tvKey(TCH)]||{loop:[],ads:[],main:null,ev:10},li=function(a,l){return a.map(function(x,i){return '<li>'+esc(x.n)+' ('+mm(x.d)+') <button class="b" data-x="tvrm" data-l="'+l+'" data-i="'+i+'">✕</button></li>'}).join('')};
   if(!$('#tvll'))return;$('#tvll').innerHTML=li(t.loop||[],'loop');$('#tval').innerHTML=li(t.ads||[],'ads');$('#tvmn').textContent=(t.main?'Émission : '+t.main.n+' ('+mm(t.main.d)+')':'Pas d’émission principale.')+' · Stockage TV : '+tvMo(t)+' Mo (Supabase gratuit : 1 Go en tout)';$('#tvev').value=String(t.ev||10);[].forEach.call(document.querySelectorAll('[data-x=tved]'),function(b){b.classList.toggle('pk',+b.dataset.c===TCH)})}
 function tvTick(){var v=$('#tvv');if(!v)return;
-  if($('#v-tv').hidden){if(tvCur){v.pause();v.removeAttribute('src');v.load();tvCur=''}return}
-  var tv=S[tvKey(VCH)],o=$('#tvo'),x=$('#tvx'),m=$('#tvm'),g=(tv&&tv.on)?tvSeg(tv,(Date.now()-tv.t0)/1000):null,mOn=tvMatch();
-  v.muted=!unlocked||(!!sb&&isAdmin)||mOn;
+  if($('#v-tv').hidden){if(tvCur){v.pause();v.removeAttribute('src');v.load();tvCur=''}tvcDrop();tvVkey='';return}
+  var tv=S[tvKey(VCH)],o=$('#tvo'),x=$('#tvx'),m=$('#tvm'),g=(tv&&tv.on)?tvSeg(tv,(Date.now()-tv.t0)/1000):null,mOn=tvMatch(),capOn=tvcSync();
+  v.muted=!unlocked||(!!sb&&isAdmin)||mOn||capOn;
   if(!g){x.classList.toggle('on',true);x.innerHTML=(tv&&tv.on)?'Programme en préparation…':'TV éteinte<br>reviens plus tard';o.classList.remove('on');m.textContent='';if(tvCur){v.pause();v.removeAttribute('src');v.load()}tvCur='';return}
   x.classList.remove('on');
   if(tvCur!==g.u){tvCur=g.u;v.onloadedmetadata=function(){var g2=(S.tv&&S.tv.on)?tvSeg(S.tv,(Date.now()-S.tv.t0)/1000):null;if(g2&&g2.u===tvCur){try{v.currentTime=g2.t}catch(_){}}v.play().catch(function(){})};v.src=g.u;v.load()}
@@ -719,6 +722,46 @@ document.addEventListener('click',function(e){var x=e.target.closest('[data-x]')
     q.textContent='Affiché : '+mt0.home+' – '+mt0.away+' ✓';commit()}
   else if(k==='tvmlv'){S.tvm={mode:'live',ch:+$('#tvmch').value,id:S.lm||0};q.textContent='Match en direct affiché sur la TV ✓';commit()}
   else if(k==='tvmoff'){S.tvm=null;q.textContent='Match retiré de la TV.';commit()}});
+var tvc=null,tvcOK=0,tvStream=null,tvCapCh=0,tvPeers={},tvVpc=null,tvVkey='',tvJoinT=0;
+function tvcSend(o){if(tvc&&tvcOK)tvc.send({type:'broadcast',event:'sig',payload:o})}
+function tvcInit(){if(!sb||tvc)return;tvc=sb.channel('tvcast');
+  tvc.on('broadcast',{event:'sig'},function(m){var d=m.payload||{};
+    if(tvStream){if(d.t==='join'&&d.ch===tvCapCh)tvcOffer(d.id);else if(d.t==='answer'&&tvPeers[d.id]){var pc=tvPeers[d.id];pc.setRemoteDescription(d.sdp).then(function(){flushIce(pc)}).catch(function(){})}else if(d.t==='ice'&&d.to==='host')addIce(tvPeers[d.id],d.c)}
+    else{if(d.t==='offer'&&d.to===CID)tvcAnswer(d);else if(d.t==='ice'&&d.to===CID)addIce(tvVpc,d.c)}
+  }).subscribe(function(st){tvcOK=st==='SUBSCRIBED'})}
+function tvcOffer(id){if(tvPeers[id]){try{tvPeers[id].close()}catch(e){}}
+  var pc=new RTCPeerConnection(ICE);pc._p=[];tvPeers[id]=pc;tvStream.getTracks().forEach(function(t){pc.addTrack(t,tvStream)});
+  pc.onicecandidate=function(e){if(e.candidate)tvcSend({t:'ice',to:id,c:e.candidate})};
+  pc.createOffer().then(function(o){return pc.setLocalDescription(o)}).then(function(){tvcSend({t:'offer',to:id,sdp:pc.localDescription})}).catch(function(){})}
+function tvcAnswer(d){if(tvVpc){try{tvVpc.close()}catch(e){}}
+  var pc=tvVpc=new RTCPeerConnection(ICE);pc._p=[];
+  pc.ontrack=function(e){var v=$('#tvcv');if(!v)return;v.srcObject=e.streams[0];v.muted=!unlocked||(!!sb&&isAdmin);v.play().catch(function(){})};
+  pc.onconnectionstatechange=function(){if(pc===tvVpc&&(pc.connectionState==='failed'||pc.connectionState==='closed'))tvcDrop()};
+  pc.onicecandidate=function(e){if(e.candidate)tvcSend({t:'ice',to:'host',id:CID,c:e.candidate})};
+  pc.setRemoteDescription(d.sdp).then(function(){flushIce(pc);return pc.createAnswer()}).then(function(a){return pc.setLocalDescription(a)}).then(function(){tvcSend({t:'answer',id:CID,sdp:pc.localDescription})}).catch(function(){})}
+function tvcDrop(){if(tvVpc){try{tvVpc.close()}catch(e){}tvVpc=null}var v=$('#tvcv');if(v&&v.srcObject){v.srcObject=null}}
+function tvcSync(){var tv=S[tvKey(VCH)],cap=(tv&&tv.cap)||0,v=$('#tvcv'),bx=$('#tvbox');if(!v||!bx)return false;
+  if(tvStream&&tvCapCh===VCH&&cap){if(v.srcObject!==tvStream){v.srcObject=tvStream;v.muted=true;v.play().catch(function(){})}bx.classList.add('cap');return true}
+  if(!cap||!sb){tvcDrop();tvVkey='';bx.classList.remove('cap');return false}
+  var key=VCH+':'+cap;if(tvVkey!==key){tvcDrop();tvVkey=key;tvJoinT=0}
+  if(!tvVpc&&Date.now()-tvJoinT>3000){tvJoinT=Date.now();tvcInit();tvcSend({t:'join',id:CID,ch:VCH})}
+  var has=!!v.srcObject;if(has){v.muted=!unlocked||(!!sb&&isAdmin);if(v.paused)v.play().catch(function(){})}
+  bx.classList.toggle('cap',has);return has}
+function tvcMsg(m){var e=$('#tvcm');if(e)e.textContent=m}
+function tvcStop(msg){var ch=tvCapCh;if(tvStream){tvStream.getTracks().forEach(function(t){t.stop()});tvStream=null}
+  Object.keys(tvPeers).forEach(function(k){try{tvPeers[k].close()}catch(e){}});tvPeers={};
+  var t=S[tvKey(ch||TCH)];if(t)t.cap=0;tvCapCh=0;var v=$('#tvcv');if(v)v.srcObject=null;commit();tvcMsg(msg||'Direct arrêté.')}
+function tvcStart(){if(sb&&!isAdmin){tvcMsg('Réservé à l’opérateur.');return}
+  if(window.self!==window.top){tvcMsg('Bloqué : ouvre le site directement, pas dans un aperçu intégré.');return}
+  var md=navigator.mediaDevices;if(!md||!md.getDisplayMedia){tvcMsg('Impossible ici : utilise un ordinateur (Chrome ou Edge).');return}
+  md.getDisplayMedia({video:true,audio:true}).catch(function(e){if(e&&e.name==='NotAllowedError')throw e;return md.getDisplayMedia({video:true})}).then(function(s){
+    if(tvStream)tvcStop();var ch=TCH;tvStream=s;tvCapCh=ch;tvcInit();
+    s.getVideoTracks()[0].onended=function(){if(tvStream===s)tvcStop('Le partage s’est arrêté.')};
+    tvGet().cap=Date.now();commit();
+    tvcMsg('● Direct en cours sur la chaîne '+ch+'. Pour voir ce que voient les joueurs : onglet TV, bouton TV '+ch+'.')
+  }).catch(function(e){tvcMsg(e&&e.name==='NotAllowedError'?'Partage annulé : choisis un onglet puis clique sur « Partager ».':'Partage impossible : '+(e&&e.message||e))})}
+document.addEventListener('click',function(e){var x=e.target.closest('[data-x=tvcs],[data-x=tvcx]');if(!x)return;
+  if(x.dataset.x==='tvcs')tvcStart();else{if(tvStream)tvcStop();else{tvGet().cap=0;commit();tvcMsg('Direct arrêté.')}}});
 function tvDur(f){return new Promise(function(r){var v=document.createElement('video'),u=URL.createObjectURL(f);v.preload='metadata';v.onloadedmetadata=function(){URL.revokeObjectURL(u);r(isFinite(v.duration)?v.duration:0)};v.onerror=function(){URL.revokeObjectURL(u);r(0)};v.src=u})}
 function tvUp(f){return tvDur(f).then(function(d){if(!d)throw {message:f.name+' : durée illisible, ignorée.'};
   if(!sb)return {u:URL.createObjectURL(f),n:f.name,d:d,s:f.size};
