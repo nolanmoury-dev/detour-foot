@@ -783,6 +783,134 @@ if(sb){
 }
 var vw=new URLSearchParams(location.search).get('view');
 if(vw==='overlay'||vw==='player'){var nb=document.querySelector('#nav [data-v="'+vw+'"]');nb.click();if(vw==='overlay'){document.body.classList.add('ov');unlocked=true;if(new URLSearchParams(location.search).get('fond')==='noir')document.body.classList.add('blk')}}
+/* ===== PATCH DÉTOUR FOOT : à coller juste AVANT la dernière ligne "})();" (avant </script>) ===== */
+;(function(){
+var css=`
+.bug.sb{display:block;height:auto;background:none;overflow:visible;border-radius:0;font-family:'Barlow Condensed',Impact,sans-serif;color:#111;font-weight:700;text-transform:uppercase}
+.bug.sb>.sbw{display:block;padding:0}
+.sbw img{display:block;width:100%;height:100%;object-fit:contain}
+.plr{display:flex;height:5.4cqw;background:#fff;border-radius:.8cqw;overflow:hidden;font-size:3cqw}
+.plr>*{display:flex;align-items:center;justify-content:center}
+.pt{min-width:9cqw;padding:0 1.6cqw;color:var(--p);box-shadow:inset 1.2cqw 0 0 var(--c)}
+.pt.r{box-shadow:inset -1.2cqw 0 0 var(--c)}
+.pn{background:var(--p);color:#fff;width:4.6cqw;font-size:3.6cqw}
+.plo{background:var(--p);width:6cqw;padding:.7cqw;font-size:3.4cqw}
+.plc{display:block;width:14cqw;margin:0 auto;background:var(--p);color:#fff;text-align:center;font-size:2.4cqw;line-height:3.2cqw;border-radius:0 0 .8cqw .8cqw;font-variant-numeric:tabular-nums}
+.bug.sb>.sbw.lgw{display:flex}
+.lgl,.lgm,.lgr{display:grid;grid-template-rows:4.8cqw 4.8cqw}
+.lgl .lo{background:#000;padding:.7cqw;display:flex;justify-content:center;align-items:center;min-width:10cqw;font-size:3cqw;color:#fff}
+.lgl .ck{background:#fff;display:flex;align-items:center;justify-content:center;font-size:2.7cqw;padding:0 1.2cqw;font-variant-numeric:tabular-nums}
+.lgm{background:#000;color:#fff;font-size:3cqw}.lgm b{display:flex;align-items:center;padding:0 2cqw}
+.lgr{background:#fff;font-size:3.8cqw}.lgr i{font-style:normal;display:flex;align-items:center;justify-content:center;width:6cqw;border-left:.6cqw solid var(--c)}.lgr i+i{border-top:.15cqw solid #000}
+.l1r{display:flex;height:5cqw;background:var(--p);color:#fff;border-radius:.6cqw;overflow:hidden;font-size:3cqw;border-bottom:.5cqw solid var(--a)}
+.l1r>*{display:flex;align-items:center;padding:0 1.5cqw}
+.l1r .lo{background:#fff;width:5.6cqw;padding:.6cqw}
+.l1r .ss{background:var(--a);font-size:3.4cqw;gap:.8cqw}
+.l1r .ck{background:#00000040;font-size:2.4cqw;font-variant-numeric:tabular-nums}
+.gfx.gx{width:64cqw;height:12.5cqw;overflow:visible;color:#fff}
+.gx .gx-b{position:absolute;inset:0}
+.gx .gx-s{position:absolute;left:0;top:0;bottom:0;width:12cqw;display:flex;align-items:center;justify-content:center;padding:1.6cqw;background:var(--c);font-size:6cqw}
+.gx .gx-s img{width:100%;height:100%;object-fit:contain}
+.gx .gx-t{position:absolute;left:14cqw;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;line-height:1}
+.gx-t small{font:600 1.8cqw Barlow,sans-serif;letter-spacing:.18em}.gx-t b{font-size:6cqw;letter-spacing:.05em}.gx-t em{font-style:normal;font-size:2.6cqw;font-weight:600}
+.gx .gx-n{position:absolute;right:0;top:0;bottom:0;padding:0 2.4cqw;display:flex;align-items:center;gap:1cqw;font-size:6.6cqw;font-weight:700}
+.gx-n i{font-style:normal}
+.gx-pl .gx-b{background:var(--p);border-bottom:.8cqw solid var(--a)}
+.gx-pl .gx-s{clip-path:polygon(0 0,100% 0,82% 100%,0 100%);width:15cqw}
+.gx-l1 .gx-b{background:var(--p);border-left:1cqw solid var(--a);clip-path:polygon(0 0,100% 0,100% 70%,96% 100%,0 100%)}
+.gx-lg{color:#000}.gx-lg .gx-b{background:#fff;border-bottom:.8cqw solid var(--c)}.gx-lg .gx-s{background:#000}.gx-lg .gx-n{background:#000;color:#fff}
+.gfx.gx-l1.go{animation:gxl 4s cubic-bezier(.2,.8,.2,1) forwards}
+.gfx.gx-lg.go{animation:gxz 4s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes gxl{0%{transform:translateX(-110%)}10%,88%{transform:none}100%{transform:translateX(-110%)}}
+@keyframes gxz{0%{opacity:0;transform:scale(.6)}10%,88%{opacity:1;transform:none}100%{opacity:0;transform:scale(1.05)}}
+.s-lg .cf{background:#fff;color:#000;border-bottom-color:var(--c)}.s-l1 .cf{border-radius:0}
+.rw{position:absolute;inset:0;z-index:8;display:none;overflow:hidden;pointer-events:none;font-family:'Barlow Condensed',Impact,sans-serif;text-transform:uppercase;color:#fff;--sk:-18deg}
+.s-l1 .rw{--sk:18deg}.s-lg .rw{--sk:0deg}
+.rw.go{display:block}
+.rw .pa,.rw .pb{position:absolute;top:-5%;bottom:-5%;width:70%}
+.rw .pa{left:-14%;background:var(--p)}.rw .pb{right:-14%;background:var(--a)}
+.s-lg .rw .pa{background:#000}.s-lg .rw .pb{background:#fff}
+.rw.go .pa{animation:rwa 2.6s cubic-bezier(.7,0,.3,1) forwards}
+.rw.go .pb{animation:rwb 2.6s cubic-bezier(.7,0,.3,1) forwards}
+@keyframes rwa{0%{transform:translateX(-120%) skewX(var(--sk))}20%,76%{transform:translateX(0) skewX(var(--sk))}100%{transform:translateX(-120%) skewX(var(--sk))}}
+@keyframes rwb{0%{transform:translateX(120%) skewX(var(--sk))}20%,76%{transform:translateX(0) skewX(var(--sk))}100%{transform:translateX(120%) skewX(var(--sk))}}
+.rw:before{content:"";position:absolute;inset:0;background:#fff;opacity:0;z-index:3}
+.rw.go:before{animation:rwf 2.6s forwards}@keyframes rwf{0%{opacity:.9}12%,100%{opacity:0}}
+.rw:after{content:"";position:absolute;inset:0;z-index:2;background:repeating-linear-gradient(0deg,#0000 0 3px,#00000035 3px 4px);opacity:.7}
+.rwc{position:absolute;left:50%;top:46%;z-index:1;transform:translate(-50%,-50%);text-align:center;opacity:0;display:flex;flex-direction:column;align-items:center;line-height:1}
+.rw.go .rwc{animation:rwc 2.6s forwards}
+@keyframes rwc{0%,14%{opacity:0;transform:translate(-50%,-50%) scale(0) rotate(540deg)}34%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}72%{opacity:1;transform:translate(-50%,-50%) scale(1)}82%,100%{opacity:0;transform:translate(-50%,-50%) scale(1.15)}}
+.rwc span{height:20cqw;font-size:16cqw;display:block}.rwc span img{height:100%;width:auto}
+.rwc b{font-size:8cqw;letter-spacing:.08em;margin-top:1.4cqw}.rwc small{font:600 3cqw Barlow,sans-serif;letter-spacing:.25em;margin-top:.6cqw}
+.rwt{position:absolute;left:0;bottom:5cqw;z-index:1;white-space:nowrap;font-size:7cqw;opacity:.28;animation:rwt .9s linear infinite}
+@keyframes rwt{to{transform:translateX(-22cqw)}}
+.rpl b{display:flex;align-items:center;gap:1cqw}.rpl b img{height:3cqw;width:auto}
+.fp2{position:relative;flex:1;min-height:0;border:.3cqw solid #ffffffaa;border-radius:.6cqw;background:repeating-linear-gradient(90deg,#1c5a3a 0 12.5%,#1f6340 12.5% 25%);overflow:hidden}
+.fp2:before{content:"";position:absolute;left:0;right:0;top:50%;height:.3cqw;background:#ffffffaa}
+.fp2:after{content:"";position:absolute;left:50%;top:50%;width:13cqw;height:13cqw;transform:translate(-50%,-50%);border:.3cqw solid #ffffffaa;border-radius:50%}
+.fp2 .bx{position:absolute;left:25%;width:50%;height:19%;top:0;border:.3cqw solid #ffffffaa;border-top:0}.fp2 .bx.b{top:auto;bottom:0;border:.3cqw solid #ffffffaa;border-bottom:0}
+.fp2 .pj b{width:4.6cqw;height:4.6cqw;font-size:2.4cqw;background:var(--k);box-shadow:0 0 0 .3cqw #fff}
+.fp2 .pj span{background:#000b;padding:.1cqw .8cqw;border-radius:.4cqw;margin-top:.3cqw;font-size:1.8cqw;white-space:nowrap}
+.bn{margin-top:1.2cqw;font-size:2cqw;font-weight:600;background:#0000004d;padding:.6cqw 1.4cqw;border-left:.6cqw solid var(--a)}
+.ls2{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:3cqw;min-height:0}
+.lc{background:#00000030;border-top:.7cqw solid var(--k);padding:1cqw 1.4cqw}
+.lc h4{display:flex;align-items:center;gap:1cqw;margin:0 0 .8cqw;font-size:2.8cqw}.lc h4 img{height:3.4cqw;width:auto}.lc h4 i{width:.9cqw;height:3cqw;background:var(--k);display:inline-block}
+.lr2{display:flex;align-items:center;gap:1.2cqw;font-size:2.05cqw;font-weight:600;padding:.25cqw .8cqw;margin-bottom:.3cqw;background:var(--fr)}
+.lr2 b{width:3.2cqw;text-align:center;background:var(--k);border-radius:.4cqw;line-height:1.3;color:#fff}
+.bn2{margin-top:.6cqw;font-size:1.7cqw;font-weight:600;opacity:.85}
+`;
+var sty=document.createElement('style');sty.textContent=css;document.head.appendChild(sty);
+
+/* ---- Bandeau score : 3 styles (PL, Ligue 1, Liga) avec le logo de la compétition ---- */
+function sbHtml(){var h=T[S.h],a=T[S.a],lo=logoHtml(),c=clk();
+ if(S.sty==='lg')return '<div class="sbw lgw"><div class="lgl"><span class="lo">'+lo+'</span><span class="ck">'+c+'</span></div><div class="lgm"><b>'+h[1]+'</b><b>'+a[1]+'</b></div><div class="lgr"><i style="--c:'+h[2]+'">'+S.sc[0]+'</i><i style="--c:'+a[2]+'">'+S.sc[1]+'</i></div></div>';
+ if(S.sty==='l1')return '<div class="sbw"><div class="l1r"><span class="lo">'+lo+'</span><b style="box-shadow:inset .6cqw 0 0 '+h[2]+'">'+h[1]+'</b><b class="ss">'+S.sc[0]+' – '+S.sc[1]+'</b><b style="box-shadow:inset -.6cqw 0 0 '+a[2]+'">'+a[1]+'</b><b class="ck">'+c+'</b></div></div>';
+ return '<div class="sbw"><div class="plr"><b class="pt" style="--c:'+h[2]+'">'+h[1]+'</b><b class="pn">'+S.sc[0]+'</b><span class="plo">'+lo+'</span><b class="pn">'+S.sc[1]+'</b><b class="pt r" style="--c:'+a[2]+'">'+a[1]+'</b></div><div class="plc">'+c+'</div></div>'}
+
+var ids=['#s1','#s2','#s3','#s4'];
+ST.forEach(function(o,i){var el=document.querySelector(ids[i]);if(!el)return;
+ var rw=document.createElement('div');rw.className='rw';el.appendChild(rw);
+ o.bug=function(){var b=el.querySelector('.bug');b.className='bug sb sb-'+S.sty;b.innerHTML=sbHtml()};
+ /* animation de but, un look par style */
+ o.goal=function(side,t,name,min){var g=el.querySelector('.gfx');g.className='gfx gx gx-'+S.sty;g.style.setProperty('--c',t[2]);
+  g.innerHTML='<div class="gx-b"></div><div class="gx-s">'+logoHtml()+'</div><div class="gx-t"><small>'+t[0]+'</small><b>BUT !</b><em>'+name+' '+min+'’</em></div><div class="gx-n"><i>'+S.sc[0]+'</i><i>–</i><i>'+S.sc[1]+'</i></div>';
+  void g.offsetWidth;g.classList.add('go')};
+ /* effet "retour en arrière" plein écran */
+ o.rwGo=function(nm){rw.innerHTML='<i class="pa"></i><i class="pb"></i><div class="rwc"><span>'+logoHtml()+'</span><b>◀◀ REPLAY</b>'+(nm?'<small>BUT · '+nm+'</small>':'')+'</div><div class="rwt">◀◀ ◀◀ ◀◀ ◀◀ ◀◀ ◀◀ ◀◀ ◀◀ ◀◀ ◀◀</div>';rw.className='rw';void rw.offsetWidth;rw.className='rw go'};
+ o.rpl=function(u){var r=el.querySelector('.rpl'),v=r.firstChild,b=r.querySelector('b'),me=this,nm=(S.fx&&S.fx.k==='g')?S.fx.name:'';
+  clearTimeout(me.ra);clearTimeout(me.rb);b.innerHTML=logoHtml()+' REPLAY';me.rwGo(nm);
+  v.src=u;v.playbackRate=1;v.loop=false;v.load();
+  me.ra=setTimeout(function(){r.classList.add('on');try{v.currentTime=0}catch(_){}v.play().catch(function(){})},1000);
+  var fin=function(){if(!r.classList.contains('on'))return;v.onended=null;me.rwGo('');setTimeout(function(){r.classList.remove('on');v.pause()},1000)};
+  v.onended=fin;me.rb=setTimeout(fin,17500)}});
+
+/* ---- Replay : on garde maintenant 15 s en arrière (morceaux de 15 s décalés de 7,5 s) ---- */
+segRun=function(){if(!SEG.on||!stream)return;try{var ch=[],r=new MediaRecorder(stream);r.ondataavailable=function(e){if(e.data&&e.data.size)ch.push(e.data)};r.onstop=function(){SEG.last={b:new Blob(ch,{type:'video/webm'}),t:Date.now()}};r.start();setTimeout(function(){if(r.state!=='inactive')r.stop()},15000)}catch(_){}};
+segStart=function(){SEG.on=1;segRun();SEG.i1=setInterval(segRun,15000);setTimeout(function(){if(SEG.on){segRun();SEG.i2=setInterval(segRun,15000)}},7500)};
+
+/* ---- Buteur : choisi dans la compo de chaque équipe ---- */
+var w=$('#who');
+w.parentNode.insertAdjacentHTML('beforebegin','<div class="r"><select id="wsh" style="flex:1"></select><select id="wsa" style="flex:1"></select></div><p class="lbl">Choisis le buteur (domicile à gauche, extérieur à droite), puis appuie sur « But domicile » ou « But extérieur ». Sinon écris le nom ci-dessous.</p>');
+function scFill(){var sg=[S.h,S.a,JSON.stringify(lu(0)),JSON.stringify(lu(1))].join('|');if(scFill.s===sg)return;scFill.s=sg;
+ [['#wsh',0],['#wsa',1]].forEach(function(x){var s=$(x[0]),L=lu(x[1])||[],t=T[x[1]?S.a:S.h];
+  s.innerHTML='<option value="">'+t[0]+' · buteur…</option>'+L.map(function(z){var p=pl(z);return '<option value="'+esc(p[1].toUpperCase())+'">'+(p[0]?p[0]+' ':'')+esc(p[1])+'</option>'}).join('')})}
+setInterval(scFill,1000);scFill();
+document.addEventListener('click',function(e){var b=e.target.closest('[data-a=gh],[data-a=ga]');if(!b)return;var s=$(b.dataset.a==='gh'?'#wsh':'#wsa');if(s&&s.value){$('#who').value=s.value;setTimeout(function(){s.value=''},0)}},true);
+
+/* ---- Compos plus belles ---- */
+var PN=['1','2','4','5','3','6','8','10','7','9','11'],PM=['Moreau','Petit','Roche','Blanc','Faure','Girard','Lopez','Martin','Diallo','Nkosi','Silva'],PP=[[50,88],[15,68],[38,70],[62,70],[85,68],[25,47],[50,49],[75,47],[20,21],[50,17],[80,21]];
+function pit(sd){var t=T[sd?S.a:S.h],L=lu(sd),ps=PP.map(function(x,i){var q=L?pl(L[i]||''):[PN[i],PM[i]];return '<div class="pj" style="--i:'+i+';left:'+x[0]+'%;top:'+x[1]+'%"><b>'+(q[0]||'')+'</b><span>'+esc(q[1])+'</span></div>'}).join(''),
+ sub=L?(L.length>11?L.slice(11).map(function(z){return esc(pl(z).join(' ').trim())}).join(' · '):''):'Dupont · Henry · Mercier';
+ return '<h3>'+t[0]+' · 4-3-3</h3><div class="fp2" style="--k:'+t[2]+'"><i class="bx"></i><i class="bx b"></i>'+ps+'</div>'+(sub?'<div class="bn">Remplaçants · '+sub+'</div>':'')}
+FS.pitch=function(){return pit(0)};FS.pitch2=function(){return pit(1)};
+FS.list=function(){function col(sd,o){var t=T[sd?S.a:S.h],L=lu(sd),n=L?L.slice(0,11).map(pl):PM.slice(0,11).map(function(x,i){return [PN[i],x]}),rs=L?(L.length>11?L.slice(11).map(function(z){return esc(pl(z).join(' ').trim())}).join(' · '):''):'Dupont · Henry · Mercier';
+ return '<div class="lc" style="--k:'+t[2]+'"><h4 class="it" style="--i:'+o+'">'+tl(t)+t[0]+'</h4>'+n.map(function(x,i){return '<div class="lr2 it" style="--i:'+(o+i+1)+'"><b>'+(x[0]||i+1)+'</b><span>'+esc(x[1])+'</span></div>'}).join('')+(rs?'<div class="bn2 it" style="--i:'+(o+12)+'">Remplaçants · '+rs+'</div>':'')+'</div>'}
+ return '<h3>Compos</h3><div class="ls2">'+col(0,0)+col(1,1)+'</div>'};
+var pb0=document.querySelector('#fsb [data-f=pitch]');
+if(pb0){pb0.textContent='Terrain domicile';pb0.insertAdjacentHTML('afterend','<button class="b" data-f="pitch2">Terrain extérieur</button>')}
+all();
+})();
+
 })();
 </script>
 </body>
