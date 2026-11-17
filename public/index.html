@@ -675,7 +675,7 @@ $('#adf').onchange=function(){var fs=[].slice.call(this.files),P=pmGet(APH),q=$(
       P.v.push({u:sb.storage.from('media').getPublicUrl(p).data.publicUrl,n:f.name});adUI();nx()})})()};
 
 /* ===== TV Détour : boucle + émission principale + coupures pub ===== */
-var tvCur='';
+var tvCur='',tvT=0,tvJoin0=0;
 var VCH=1,TCH=1;
 function tvKey(c){return c===2?'tv2':'tv'}
 function tvGet(){var k=tvKey(TCH);return S[k]=S[k]||{on:0,mode:'loop',loop:[],main:null,ads:[],ev:10,t0:0}}
@@ -701,11 +701,13 @@ function tvTick(){var v=$('#tvv');if(!v)return;
   if(capOn){if(tvCur){v.pause();v.removeAttribute('src');v.load();tvCur=''}x.classList.remove('on');o.classList.remove('on');m.textContent='';return}
   if(!g){x.classList.toggle('on',true);x.innerHTML=(tv&&tv.on)?'Programme en préparation…':'TV éteinte<br>reviens plus tard';o.classList.remove('on');m.textContent='';if(tvCur){v.pause();v.removeAttribute('src');v.load()}tvCur='';return}
   x.classList.remove('on');
-  if(tvCur!==g.u){tvCur=g.u;v.onloadedmetadata=function(){var g2=(S.tv&&S.tv.on)?tvSeg(S.tv,(Date.now()-S.tv.t0)/1000):null;if(g2&&g2.u===tvCur){try{v.currentTime=g2.t}catch(_){}}v.play().catch(function(){})};v.src=g.u;v.load()}
+  if(tvCur!==g.u){tvCur=g.u;tvT=Date.now();v.onloadedmetadata=function(){var g2=(S.tv&&S.tv.on)?tvSeg(S.tv,(Date.now()-S.tv.t0)/1000):null;if(g2&&g2.u===tvCur){try{v.currentTime=g2.t}catch(_){}}v.play().catch(function(){})};v.src=g.u;v.load()}
   else{if(Math.abs(v.currentTime-g.t)>2.5){try{v.currentTime=g.t}catch(_){}}if(v.paused||v.ended)v.play().catch(function(){})}
+  var bad=v.error?'⚠ Vidéo illisible sur cet appareil (code '+v.error.code+')':(v.readyState<2&&Date.now()-tvT>6000?'⚠ La vidéo n’arrive pas<br><small>réseau bloqué ou fichier illisible</small>':'');
+  if(bad){x.innerHTML=bad;x.classList.add('on');x._bad=1}else if(x._bad){x._bad=0;x.classList.remove('on')}
   o.className='tvo on'+(g.k==='ad'?' ad':'');
   o.textContent=g.k==='ad'?'📢 Pub · reprise dans '+mm(Math.ceil(g.left)):g.k==='main'?'● Émission en direct':'🔁 TV Détour';
-  m.textContent=g.k==='main'&&g.brk?'Prochaine coupure pub dans '+mm(Math.ceil(g.left)):''}
+  m.textContent=tvcWait()||(g.k==='main'&&g.brk?'Prochaine coupure pub dans '+mm(Math.ceil(g.left)):'')}
 function tvHms(r){var s=Math.max(0,Math.ceil(r/1000)),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),mi=Math.floor(s%3600/60),se=s%60,z=function(n){return ('0'+n).slice(-2)};return (d?d+' j ':'')+((d||h)?z(h)+':':'')+z(mi)+':'+z(se)}
 function tvBd(c,l,n){var u=lg(l);return '<span class="tvb" style="background:'+c+'">'+(u?'<img src="'+u+'" alt="">':esc(String(n).slice(0,3)))+'</span>'}
 function tvMatch(){var o=$('#tvmo'),bx=$('#tvbox'),m=S.tvm;if(!o)return false;var on=!!(m&&(m.ch===0||m.ch===VCH));
@@ -755,10 +757,11 @@ function tvcAd(tv){var ad=((tv&&tv.ads)||[]).filter(function(z){return z.d>0}),A
 function tvcSync(adOn){var tv=S[tvKey(VCH)],cap=(tv&&tv.cap)||0,v=$('#tvcv'),bx=$('#tvbox');if(!v||!bx)return false;
   if(tvStream&&tvCapCh===VCH&&cap){if(v.srcObject!==tvStream){v.srcObject=tvStream;v.muted=true;v.play().catch(function(){})}bx.classList.toggle('cap',!adOn);return !adOn}
   if(!cap||!sb){tvcDrop();tvVkey='';bx.classList.remove('cap');return false}
-  var key=VCH+':'+cap;if(tvVkey!==key){tvcDrop();tvVkey=key;tvJoinT=0}
+  var key=VCH+':'+cap;if(tvVkey!==key){tvcDrop();tvVkey=key;tvJoinT=0;tvJoin0=Date.now()}
   if(!tvVpc&&Date.now()-tvJoinT>3000){tvJoinT=Date.now();tvcInit();tvcSend({t:'join',id:CID,ch:VCH})}
   var has=!!v.srcObject;if(has){v.muted=adOn||!unlocked||(!!sb&&isAdmin);if(v.paused)v.play().catch(function(){})}
   bx.classList.toggle('cap',has&&!adOn);return has&&!adOn}
+function tvcWait(){var tv=S[tvKey(VCH)];if(!tv||!tv.cap||!sb||(tvStream&&tvCapCh===VCH))return '';var v=$('#tvcv');return (v&&!v.srcObject&&tvJoin0&&Date.now()-tvJoin0>8000)?'⚠ Un direct est en cours mais ne se connecte pas (réseau bloqué ?). Les vidéos passent en attendant.':''}
 function tvcMsg(m){var e=$('#tvcm');if(e)e.textContent=m}
 function tvcStop(msg){var ch=tvCapCh;if(tvStream){tvStream.getTracks().forEach(function(t){t.stop()});tvStream=null}
   Object.keys(tvPeers).forEach(function(k){try{tvPeers[k].close()}catch(e){}});tvPeers={};
