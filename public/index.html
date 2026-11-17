@@ -278,7 +278,7 @@ body.hasb #snd{bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}
 <div class="r"><label class="b">🎬 Pubs de la TV (1 à 10)<input type="file" id="tvaf" accept="video/*" multiple hidden></label><button class="b" data-x="tvac">Vider</button></div><ul class="l" id="tval"></ul>
 <div class="r"><span class="lbl">Une coupure pub toutes les</span><select id="tvev"><option value="1">1 min</option><option value="2">2 min</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30">30 min</option></select></div>
 <h5>Match sur la TV</h5><div class="r"><select id="tvmch"><option value="2">Sur la chaîne 2</option><option value="1">Sur la chaîne 1</option><option value="0">Sur les deux</option></select></div><div class="r"><button class="b pk" data-x="tvmcd">⏱ Prochain match (compte à rebours)</button><button class="b pk" data-x="tvmlv">● Match en direct</button><button class="b" data-x="tvmoff">Retirer</button></div><p class="lbl" id="tvmm">Affiche par-dessus la chaîne choisie : le prochain match prévu (onglet Matchs) avec son compte à rebours, ou le score en direct. « Retirer » remet les vidéos.</p>
-<h5>Direct d’un onglet / d’une vidéo</h5><div class="r"><button class="b pk" data-x="tvcs">🖥 Diffuser un onglet</button><button class="b rd" data-x="tvcx">Arrêter le direct</button></div><p class="lbl" id="tvcm">Choisis l’onglet (YouTube, un match…) ou une fenêtre : tout le monde le voit en direct sur la chaîne que tu modifies. Coche « Partager l’audio de l’onglet » pour avoir le son. Ordinateur seulement (Chrome ou Edge), ouvre le site directement. Le direct passe devant les vidéos ; l’affiche de match reste par-dessus.</p>
+<h5>Direct d’un onglet / d’une vidéo</h5><div class="r"><button class="b pk" data-x="tvcs">🖥 Diffuser un onglet</button><button class="b rd" data-x="tvcx">Arrêter le direct</button></div><div class="r"><button class="b y" data-x="tvcad">📢 Lancer une pub maintenant</button><label class="lbl"><input type="checkbox" id="tvcau"> pubs automatiques pendant le direct (selon « Une coupure pub toutes les… »)</label></div><p class="lbl" id="tvcm">Choisis l’onglet (YouTube, un match…) ou une fenêtre : tout le monde le voit en direct sur la chaîne que tu modifies. Coche « Partager l’audio de l’onglet » pour avoir le son. Ordinateur seulement (Chrome ou Edge), ouvre le site directement. Pendant le direct, tu peux lancer les pubs de la chaîne (« Pubs de la TV » plus haut) : elles passent à la place du direct, puis le direct reprend. L’affiche de match reste par-dessus.</p>
 <div class="r"><button class="b pk" data-x="tvon">▶ Lancer l’émission</button><button class="b" data-x="tvloop">Boucle seule</button><button class="b rd" data-x="tvoff">Éteindre la TV</button></div>
 <p class="lbl" id="tvq">Les vidéos passent en boucle quand il n’y a pas d’émission. « Lancer l’émission » démarre l’émission principale depuis le début, avec toutes les pubs à la suite à chaque coupure. À la fin de l’émission, la boucle reprend. Tout le monde voit la même chose au même moment (50 Mo max par vidéo).</p></div>
 <div class="panel"><h4>Match</h4><div class="r"><select id="th"></select><span>vs</span><select id="ta"></select></div><div class="r"><button class="b pk" data-a="run" id="run">Coup d’envoi</button></div><h5>Temps du match</h5><div class="r"><span class="lbl">Mi-temps réelle</span><button class="b" data-x="dur" data-v="3">3 min</button><button class="b" data-x="dur" data-v="5">5 min</button></div><div class="r"><span class="lbl">Additionnel</span><button class="b" data-x="add" data-v="0">+0</button><button class="b" data-x="add" data-v="1">+1</button><button class="b" data-x="add" data-v="2">+2</button><button class="b" data-x="add" data-v="3">+3</button><button class="b" data-x="add" data-v="4">+4</button><button class="b" data-x="add" data-v="5">+5</button></div><div class="r"><button class="b" data-x="endh">Fin de mi-temps</button><button class="b pk" data-x="h2">2e mi-temps</button></div><p class="lbl" id="tinfo"></p>
@@ -690,11 +690,12 @@ function tvDel(a){if(!sb||!isAdmin)return;var ps=(a||[]).map(function(x){return 
 function tvMo(t){var n=tvSum0(t.loop)+tvSum0(t.ads)+(t.main?t.main.s||0:0);return (n/1048576).toFixed(0)}
 function tvSum0(a){return (a||[]).reduce(function(n,x){return n+(x.s||0)},0)}
 function tvUI(){var t=S[tvKey(TCH)]||{loop:[],ads:[],main:null,ev:10},li=function(a,l){return a.map(function(x,i){return '<li>'+esc(x.n)+' ('+mm(x.d)+') <button class="b" data-x="tvrm" data-l="'+l+'" data-i="'+i+'">✕</button></li>'}).join('')};
-  if(!$('#tvll'))return;$('#tvll').innerHTML=li(t.loop||[],'loop');$('#tval').innerHTML=li(t.ads||[],'ads');$('#tvmn').textContent=(t.main?'Émission : '+t.main.n+' ('+mm(t.main.d)+')':'Pas d’émission principale.')+' · Stockage TV : '+tvMo(t)+' Mo (Supabase gratuit : 1 Go en tout)';$('#tvev').value=String(t.ev||10);[].forEach.call(document.querySelectorAll('[data-x=tved]'),function(b){b.classList.toggle('pk',+b.dataset.c===TCH)})}
+  if(!$('#tvll'))return;$('#tvll').innerHTML=li(t.loop||[],'loop');$('#tval').innerHTML=li(t.ads||[],'ads');$('#tvmn').textContent=(t.main?'Émission : '+t.main.n+' ('+mm(t.main.d)+')':'Pas d’émission principale.')+' · Stockage TV : '+tvMo(t)+' Mo (Supabase gratuit : 1 Go en tout)';$('#tvev').value=String(t.ev||10);[].forEach.call(document.querySelectorAll('[data-x=tved]'),function(b){b.classList.toggle('pk',+b.dataset.c===TCH)});var cau=$('#tvcau');if(cau)cau.checked=!!t.capAds}
 function tvTick(){var v=$('#tvv');if(!v)return;
   if($('#v-tv').hidden){if(tvCur){v.pause();v.removeAttribute('src');v.load();tvCur=''}tvcDrop();tvVkey='';return}
-  var tv=S[tvKey(VCH)],o=$('#tvo'),x=$('#tvx'),m=$('#tvm'),g=(tv&&tv.on)?tvSeg(tv,(Date.now()-tv.t0)/1000):null,mOn=tvMatch(),capOn=tvcSync();
+  var tv=S[tvKey(VCH)],o=$('#tvo'),x=$('#tvx'),m=$('#tvm'),ca=tvcAd(tv),g=ca||((tv&&tv.on)?tvSeg(tv,(Date.now()-tv.t0)/1000):null),mOn=tvMatch(),capOn=tvcSync(!!ca);
   v.muted=!unlocked||(!!sb&&isAdmin)||mOn||capOn;
+  if(capOn){if(tvCur){v.pause();v.removeAttribute('src');v.load();tvCur=''}x.classList.remove('on');o.classList.remove('on');m.textContent='';return}
   if(!g){x.classList.toggle('on',true);x.innerHTML=(tv&&tv.on)?'Programme en préparation…':'TV éteinte<br>reviens plus tard';o.classList.remove('on');m.textContent='';if(tvCur){v.pause();v.removeAttribute('src');v.load()}tvCur='';return}
   x.classList.remove('on');
   if(tvCur!==g.u){tvCur=g.u;v.onloadedmetadata=function(){var g2=(S.tv&&S.tv.on)?tvSeg(S.tv,(Date.now()-S.tv.t0)/1000):null;if(g2&&g2.u===tvCur){try{v.currentTime=g2.t}catch(_){}}v.play().catch(function(){})};v.src=g.u;v.load()}
@@ -740,13 +741,17 @@ function tvcAnswer(d){if(tvVpc){try{tvVpc.close()}catch(e){}}
   pc.onicecandidate=function(e){if(e.candidate)tvcSend({t:'ice',to:'host',id:CID,c:e.candidate})};
   pc.setRemoteDescription(d.sdp).then(function(){flushIce(pc);return pc.createAnswer()}).then(function(a){return pc.setLocalDescription(a)}).then(function(){tvcSend({t:'answer',id:CID,sdp:pc.localDescription})}).catch(function(){})}
 function tvcDrop(){if(tvVpc){try{tvVpc.close()}catch(e){}tvVpc=null}var v=$('#tvcv');if(v&&v.srcObject){v.srcObject=null}}
-function tvcSync(){var tv=S[tvKey(VCH)],cap=(tv&&tv.cap)||0,v=$('#tvcv'),bx=$('#tvbox');if(!v||!bx)return false;
-  if(tvStream&&tvCapCh===VCH&&cap){if(v.srcObject!==tvStream){v.srcObject=tvStream;v.muted=true;v.play().catch(function(){})}bx.classList.add('cap');return true}
+function tvcAd(tv){var ad=((tv&&tv.ads)||[]).filter(function(z){return z.d>0}),A=tvSum(ad);if(!A||!tv.cap)return null;var now=Date.now();
+  if(tv.brk&&now-tv.brk<A*1000)return tvWalk(ad,(now-tv.brk)/1000,'ad');
+  if(tv.capAds){var ev=Math.max(1,tv.ev||10)*60,el=((now-tv.cap)/1000)%(ev+A);if(el>=ev)return tvWalk(ad,el-ev,'ad')}
+  return null}
+function tvcSync(adOn){var tv=S[tvKey(VCH)],cap=(tv&&tv.cap)||0,v=$('#tvcv'),bx=$('#tvbox');if(!v||!bx)return false;
+  if(tvStream&&tvCapCh===VCH&&cap){if(v.srcObject!==tvStream){v.srcObject=tvStream;v.muted=true;v.play().catch(function(){})}bx.classList.toggle('cap',!adOn);return !adOn}
   if(!cap||!sb){tvcDrop();tvVkey='';bx.classList.remove('cap');return false}
   var key=VCH+':'+cap;if(tvVkey!==key){tvcDrop();tvVkey=key;tvJoinT=0}
   if(!tvVpc&&Date.now()-tvJoinT>3000){tvJoinT=Date.now();tvcInit();tvcSend({t:'join',id:CID,ch:VCH})}
-  var has=!!v.srcObject;if(has){v.muted=!unlocked||(!!sb&&isAdmin);if(v.paused)v.play().catch(function(){})}
-  bx.classList.toggle('cap',has);return has}
+  var has=!!v.srcObject;if(has){v.muted=adOn||!unlocked||(!!sb&&isAdmin);if(v.paused)v.play().catch(function(){})}
+  bx.classList.toggle('cap',has&&!adOn);return has&&!adOn}
 function tvcMsg(m){var e=$('#tvcm');if(e)e.textContent=m}
 function tvcStop(msg){var ch=tvCapCh;if(tvStream){tvStream.getTracks().forEach(function(t){t.stop()});tvStream=null}
   Object.keys(tvPeers).forEach(function(k){try{tvPeers[k].close()}catch(e){}});tvPeers={};
@@ -757,10 +762,12 @@ function tvcStart(){if(sb&&!isAdmin){tvcMsg('Réservé à l’opérateur.');retu
   md.getDisplayMedia({video:true,audio:true}).catch(function(e){if(e&&e.name==='NotAllowedError')throw e;return md.getDisplayMedia({video:true})}).then(function(s){
     if(tvStream)tvcStop();var ch=TCH;tvStream=s;tvCapCh=ch;tvcInit();
     s.getVideoTracks()[0].onended=function(){if(tvStream===s)tvcStop('Le partage s’est arrêté.')};
-    tvGet().cap=Date.now();commit();
+    tvGet().cap=Date.now();tvGet().brk=0;commit();
     tvcMsg('● Direct en cours sur la chaîne '+ch+'. Pour voir ce que voient les joueurs : onglet TV, bouton TV '+ch+'.')
   }).catch(function(e){tvcMsg(e&&e.name==='NotAllowedError'?'Partage annulé : choisis un onglet puis clique sur « Partager ».':'Partage impossible : '+(e&&e.message||e))})}
-document.addEventListener('click',function(e){var x=e.target.closest('[data-x=tvcs],[data-x=tvcx]');if(!x)return;
+document.addEventListener('change',function(e){if(e.target.id==='tvcau'){tvGet().capAds=e.target.checked?1:0;commit()}});
+document.addEventListener('click',function(e){var x=e.target.closest('[data-x=tvcs],[data-x=tvcx],[data-x=tvcad]');if(!x)return;
+  if(x.dataset.x==='tvcad'){var t0=tvGet();if(!t0.cap){tvcMsg('Lance d’abord un direct sur cette chaîne.');return}if(!tvSum((t0.ads||[]).filter(function(z){return z.d>0}))){tvcMsg('Ajoute d’abord des pubs dans « Pubs de la TV » (plus haut).');return}t0.brk=Date.now();commit();tvcMsg('📢 Pub lancée : le direct reprend à la fin.');return}
   if(x.dataset.x==='tvcs')tvcStart();else{if(tvStream)tvcStop();else{tvGet().cap=0;commit();tvcMsg('Direct arrêté.')}}});
 function tvDur(f){return new Promise(function(r){var v=document.createElement('video'),u=URL.createObjectURL(f);v.preload='metadata';v.onloadedmetadata=function(){URL.revokeObjectURL(u);r(isFinite(v.duration)?v.duration:0)};v.onerror=function(){URL.revokeObjectURL(u);r(0)};v.src=u})}
 function tvUp(f){return tvDur(f).then(function(d){if(!d)throw {message:f.name+' : durée illisible, ignorée.'};
